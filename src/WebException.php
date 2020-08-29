@@ -1,14 +1,14 @@
 <?php
 /**
  * @author         Ni Irrty <niirrty+code@gmail.com>
- * @copyright  (c) 2016, Ni Irrty
+ * @copyright      © 2016-2020, Ni Irrty
  * @package        Niirrty\Web
  * @since          2017-11-02
- * @version        0.1.0
+ * @version        0.3.0
  */
 
 
-declare( strict_types = 1 );
+declare( strict_types=1 );
 
 
 namespace Niirrty\Web;
@@ -26,27 +26,29 @@ class WebException extends NiirrtyException
 {
 
 
-   // <editor-fold desc="// – – –   P U B L I C   C O N S T R U C T O R   – – – – – – – – – – – – – – – – – – – –">
+    // <editor-fold desc="// – – –   P U B L I C   C O N S T R U C T O R   – – – – – – – – – – – – – – – – – – – –">
 
-   /**
-    * Init a new instance.
-    *
-    * @param string         $message  The error message.
-    * @param integer        $code     The optional error code (Defaults to \E_USER_ERROR)
-    * @param \Throwable     $previous A optional previous exception
-    */
-   public function __construct( $message, int $code = 256, \Throwable $previous = null )
-   {
 
-      parent::__construct(
-         $message,
-         $code,
-         $previous
-      );
+    /**
+     * Init a new instance.
+     *
+     * @param string     $message  The error message.
+     * @param integer    $code     The optional error code (Defaults to \E_USER_ERROR)
+     * @param \Throwable $previous A optional previous exception
+     */
+    public function __construct( $message, int $code = 256, \Throwable $previous = null )
+    {
 
-   }
+        parent::__construct(
+            $message,
+            $code,
+            $previous
+        );
 
-   // </editor-fold>
+    }
+
+
+    // </editor-fold>
 
 
 }
