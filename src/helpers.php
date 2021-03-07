@@ -7,7 +7,7 @@ declare( strict_types=1 );
 namespace Niirrty\Web;
 
 
-use Mso\IdnaConvert\IdnaConvert;
+use Algo26\IdnaConvert\ToIdn;
 
 
 function idnToASCII( ?string $str ): string
@@ -25,7 +25,8 @@ function idnToASCII( ?string $str ): string
 
     }
 
-    return ( new IdnaConvert() )->encode( $str );
+    try { return ( new ToIdn() )->convert( $str ); }
+    catch ( \Throwable $ex ) { return $str; }
 
 }
 

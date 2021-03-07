@@ -2,8 +2,9 @@
 <module type="WEB_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/vendor/algo26-matthias/idna-convert" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/composer" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/mso/idna-convert" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/jakeasmith/http_build_url" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/niirrty/niirrty.core" />
     </content>
     <orderEntry type="inheritedJdk" />

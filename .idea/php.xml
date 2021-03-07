@@ -2,9 +2,10 @@
 <project version="4">
   <component name="PhpIncludePathManager">
     <include_path>
-      <path value="$PROJECT_DIR$/vendor/niirrty/niirrty.core" />
-      <path value="$PROJECT_DIR$/vendor/mso/idna-convert" />
+      <path value="$PROJECT_DIR$/vendor/jakeasmith/http_build_url" />
+      <path value="$PROJECT_DIR$/vendor/algo26-matthias/idna-convert" />
       <path value="$PROJECT_DIR$/vendor/composer" />
+      <path value="$PROJECT_DIR$/vendor/niirrty/niirrty.core" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.3" />
