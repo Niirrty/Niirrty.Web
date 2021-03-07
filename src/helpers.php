@@ -21,7 +21,7 @@ function idnToASCII( ?string $str ): string
     if ( \function_exists( '\\idn_to_ascii' ) )
     {
         /** @noinspection PhpComposerExtensionStubsInspection */
-        return \idn_to_ascii( $str );
+        return \idn_to_ascii( $str, \IDNA_DEFAULT, \INTL_IDNA_VARIANT_UTS46 );
 
     }
 
