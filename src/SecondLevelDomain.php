@@ -1,10 +1,10 @@
 <?php /** @noinspection PhpUnused */
 /**
  * @author         Ni Irrty <niirrty+code@gmail.com>
- * @copyright      © 2016-2020, Ni Irrty
+ * @copyright      © 2016-2021, Ni Irrty
  * @package        Niirrty\Web
  * @since          2017-11-02
- * @version        0.3.0
+ * @version        0.4.0
  */
 
 
@@ -14,8 +14,7 @@ declare( strict_types=1 );
 namespace Niirrty\Web;
 
 
-use Niirrty\ArrayHelper;
-use function Niirrty\strContains;
+use \Niirrty\ArrayHelper;
 
 
 /**
@@ -39,34 +38,19 @@ class SecondLevelDomain
 {
 
 
-    // <editor-fold desc="// – – –   P R I V A T E   F I E L D S   – – – – – – – – – – – – – – – – – – – – – – – –">
-
-
-    /**
-     * The host name element string.
-     *
-     * @var string
-     */
-    private $_hostName;
-
-    /**
-     * The TopLevelDomain element.
-     *
-     * @var TopLevelDomain
-     */
-    private $_tld;
+    #region // – – –   P R I V A T E   F I E L D S   – – – – – – – – – – – – – – – – – – – – – – – –
 
     /**
      * A array of states (Detail Information about the Domain)
      *
      * @var array
      */
-    private $states;
+    private array $states;
 
-    // </editor-fold>
+    #endregion
 
 
-    // <editor-fold desc="// – – –   C L A S S   C O N S T A N T S   – – – – – – – – – – – – – – – – – – – – – – –">
+    #region // – – –   C L A S S   C O N S T A N T S   – – – – – – – – – – – – – – – – – – – – – – –
 
     protected const URL_SHORTENERS = [
         'bit.do', 't.co', 'lnkd.in', 'db.tt', 'qr.ae', 'adf.ly', 'goo.gl', 'bitly.com', 'cur.lv', 'tinyurl.com',
@@ -86,26 +70,29 @@ class SecondLevelDomain
 
     protected const RESERVED_HOSTS   = '~^(example\.(com|net|org)|speedport\.ip|router\.net)$~';
 
-    // </editor-fold>
+    #endregion
 
 
-    // <editor-fold desc="// – – –   P R I V A T E   C O N S T R U C T O R   – – – – – – – – – – – – – – – – – – –">
+    #region // – – –   P R I V A T E   C O N S T R U C T O R   – – – – – – – – – – – – – – – – – – –
 
-    private function __construct( $hostname, ?TopLevelDomain $tld = null )
+    /**
+     * SecondLevelDomain constructor.
+     *
+     * @param string              $hostName The host name element string.
+     * @param TopLevelDomain|null $tld      The TopLevelDomain element.
+     *
+     * @noinspection PhpSameParameterValueInspection*/
+    private function __construct( private string $hostName = '', private ?TopLevelDomain $tld = null )
     {
-
-        $this->_hostName = $hostname;
-
-        $this->_tld = $tld;
 
         $this->states = [ 'RESERVED' => false, 'LOCAL' => false, 'SHORTENER' => false, 'DYNAMIC' => false ];
 
     }
 
-    // </editor-fold>
+    #endregion
 
 
-    // <editor-fold desc="// – – –   P U B L I C   M E T H O D S   – – – – – – – – – – – – – – – – – – – – – – – –">
+    #region // – – –   P U B L I C   M E T H O D S   – – – – – – – – – – – – – – – – – – – – – – – –
 
     /**
      * Returns the the SecondLevelDomain string value of this instance. If its defined as a fully qualified SLD
@@ -116,22 +103,22 @@ class SecondLevelDomain
     public function __toString()
     {
 
-        if ( empty( $this->_hostName ) )
+        if ( empty( $this->hostName ) )
         {
-            if ( null === $this->_tld )
+            if ( null === $this->tld )
             {
                 return '';
             }
 
-            return (string) $this->_tld;
+            return (string) $this->tld;
         }
 
-        if ( null === $this->_tld )
+        if ( null === $this->tld )
         {
-            return $this->_hostName;
+            return $this->hostName;
         }
 
-        return $this->_hostName . '.' . $this->_tld;
+        return $this->hostName . '.' . $this->tld;
 
     }
 
@@ -140,20 +127,20 @@ class SecondLevelDomain
      *
      * @return string
      */
-    public function toFullyQualifiedString()
+    public function toFullyQualifiedString(): string
     {
 
-        if ( empty( $this->_hostName ) )
+        if ( empty( $this->hostName ) )
         {
-            return $this->_tld->toFullyQualifiedString();
+            return $this->tld->toFullyQualifiedString();
         }
 
-        if ( null === $this->_tld )
+        if ( null === $this->tld )
         {
-            return $this->_hostName;
+            return $this->hostName;
         }
 
-        return $this->_hostName . '.' . $this->_tld->toFullyQualifiedString();
+        return $this->hostName . '.' . $this->tld->toFullyQualifiedString();
 
     }
 
@@ -162,20 +149,20 @@ class SecondLevelDomain
      *
      * @return string
      */
-    public function toString()
+    public function toString(): string
     {
 
-        if ( empty( $this->_hostName ) )
+        if ( empty( $this->hostName ) )
         {
-            return $this->_tld->toString();
+            return $this->tld->toString();
         }
 
-        if ( null === $this->_tld )
+        if ( null === $this->tld )
         {
-            return $this->_hostName;
+            return $this->hostName;
         }
 
-        return $this->_hostName . '.' . $this->_tld->toString();
+        return $this->hostName . '.' . $this->tld->toString();
 
     }
 
@@ -187,7 +174,7 @@ class SecondLevelDomain
     public function getTLD(): ?TopLevelDomain
     {
 
-        return $this->_tld;
+        return $this->tld;
 
     }
 
@@ -201,7 +188,7 @@ class SecondLevelDomain
     public function setTLD( ?TopLevelDomain $tld ): SecondLevelDomain
     {
 
-        $this->_tld = $tld;
+        $this->tld = $tld;
 
         return $this;
 
@@ -215,7 +202,7 @@ class SecondLevelDomain
     public function hasTLD(): bool
     {
 
-        return ( null !== $this->_tld );
+        return ( null !== $this->tld );
 
     }
 
@@ -227,7 +214,7 @@ class SecondLevelDomain
     public function getHostName(): ?string
     {
 
-        return $this->_hostName;
+        return $this->hostName;
 
     }
 
@@ -239,12 +226,12 @@ class SecondLevelDomain
     public function isFullyQualified(): bool
     {
 
-        if ( !$this->hasTLD() )
+        if ( ! $this->hasTLD() )
         {
             return false;
         }
 
-        return $this->_tld->isFullyQualified();
+        return $this->tld->isFullyQualified();
 
     }
 
@@ -257,13 +244,12 @@ class SecondLevelDomain
     public function isCountry(): bool
     {
 
-        if ( !$this->hasTLD() )
+        if ( ! $this->hasTLD() )
         {
             return false;
         }
 
-        return $this->_tld->isCountry();
-
+        return $this->tld->isCountry();
 
     }
 
@@ -276,12 +262,12 @@ class SecondLevelDomain
     public function isGeneric(): bool
     {
 
-        if ( !$this->hasTLD() )
+        if ( ! $this->hasTLD() )
         {
             return false;
         }
 
-        return $this->_tld->isGeneric();
+        return $this->tld->isGeneric();
 
     }
 
@@ -293,12 +279,12 @@ class SecondLevelDomain
     public function isGeographic(): bool
     {
 
-        if ( !$this->hasTLD() )
+        if ( ! $this->hasTLD() )
         {
             return false;
         }
 
-        return $this->_tld->isGeographic();
+        return $this->tld->isGeographic();
 
     }
 
@@ -310,12 +296,12 @@ class SecondLevelDomain
     public function isLocalized(): bool
     {
 
-        if ( !$this->hasTLD() )
+        if ( ! $this->hasTLD() )
         {
             return false;
         }
 
-        return $this->_tld->isLocalized();
+        return $this->tld->isLocalized();
 
     }
 
@@ -333,12 +319,12 @@ class SecondLevelDomain
             return true;
         }
 
-        if ( !$this->hasTLD() )
+        if ( ! $this->hasTLD() )
         {
             return false;
         }
 
-        return $this->_tld->isReserved();
+        return $this->tld->isReserved();
 
     }
 
@@ -350,12 +336,12 @@ class SecondLevelDomain
     public function hasKnownTLD(): bool
     {
 
-        if ( !$this->hasTLD() )
+        if ( ! $this->hasTLD() )
         {
             return false;
         }
 
-        return $this->_tld->isKnown();
+        return $this->tld->isKnown();
 
     }
 
@@ -379,12 +365,12 @@ class SecondLevelDomain
     public function hasDoubleTLD(): bool
     {
 
-        if ( !$this->hasTLD() )
+        if ( ! $this->hasTLD() )
         {
             return false;
         }
 
-        return $this->_tld->isDouble();
+        return $this->tld->isDouble();
 
     }
 
@@ -421,31 +407,28 @@ class SecondLevelDomain
     public function hasHostName(): bool
     {
 
-        return !empty( $this->_hostName );
+        return ! empty( $this->hostName );
 
     }
 
-    // </editor-fold>
+    #endregion
 
 
-    // <editor-fold desc="// – – –   P U B L I C   S T A T I C   M E T H O D S   – – – – – – – – – – – – – – – – –">
+    #region // – – –   P U B L I C   S T A T I C   M E T H O D S   – – – – – – – – – – – – – – – – –
 
     /**
      * Parses the defined Second Level Domain string to a {@see \Niirrty\Web\SecondLevelDomain} instance. On error it
      * returns FALSE.
      *
-     * @param string            $sld                             The second level domain string, including the optional
-     *                                                           TLD.
-     * @param SecondLevelDomain $parsedSldOut                    Returns the SecondLevelDomain if the method returns
-     *                                                           true
-     * @param bool              $allowOnlyKnownTlds              Are only known main TLDs allowed to be a parsed as a
-     *                                                           TLD?
-     * @param bool              $convertUniCode                  Convert unicode SLDs to Puny code? (Default = TRUE)
-     *
+     * @param string|null            $sld                 The second level domain string, including the optional TLD.
+     * @param SecondLevelDomain|null $parsedSldOut        Returns the SecondLevelDomain if the method returns true
+     * @param bool                   $allowOnlyKnownTlds  Are only known main TLDs allowed to be a parsed as a TLD?
+     * @param bool                   $convertUniCode      Convert unicode SLDs to Puny code? (Default = TRUE)
      * @return boolean
      */
     public static function TryParse(
-        ?string $sld, &$parsedSldOut, bool $allowOnlyKnownTlds = false, bool $convertUniCode = true ): bool
+        ?string $sld, ?SecondLevelDomain &$parsedSldOut = null, bool $allowOnlyKnownTlds = false,
+        bool $convertUniCode = true ): bool
     {
 
         if ( $convertUniCode )
@@ -453,7 +436,7 @@ class SecondLevelDomain
             $sld = idnToASCII( $sld );
         }
 
-        if ( empty( $sld ) || !\is_string( $sld ) || \is_numeric( $sld ) )
+        if ( empty( $sld ) || ! \is_string( $sld ) || \is_numeric( $sld ) )
         {
             // NULL values or none string values will always return FALSE
             return false;
@@ -461,7 +444,7 @@ class SecondLevelDomain
 
         $_sld = $sld;
 
-        if ( false !== ( $_tld = TopLevelDomain::ParseExtract( $_sld, $allowOnlyKnownTlds, false ) ) )
+        if ( false !== ( $_tld = TopLevelDomain::ParseExtract( $_sld, $allowOnlyKnownTlds ) ) )
         {
             $parsedSldOut = new SecondLevelDomain( '', $_tld );
             $parsedSldOut->states[ 'RESERVED' ] = $_tld->isReserved();
@@ -469,23 +452,23 @@ class SecondLevelDomain
         }
         else
         {
-            if ( $allowOnlyKnownTlds && !strContains( $sld, '.' ) )
+            if ( $allowOnlyKnownTlds && ! \str_contains( $sld, '.' ) )
             {
                 return false;
             }
-            if ( $allowOnlyKnownTlds && !TopLevelDomain::EndsWithValidTldString( $sld, false ) )
+            if ( $allowOnlyKnownTlds && ! TopLevelDomain::EndsWithValidTldString( $sld ) )
             {
                 return false;
             }
             $parsedSldOut = new SecondLevelDomain( '' );
         }
 
-        if ( !\preg_match( '~^[a-z0-9_][a-z.0-9_-]+$~i', $_sld ) )
+        if ( ! \preg_match( '~^[a-z0-9_][a-z.0-9_-]+$~i', $_sld ) )
         {
             return false;
         }
 
-        $parsedSldOut->_hostName = $_sld;
+        $parsedSldOut->hostName = $_sld;
 
         if ( \preg_match( static::LOCAL_HOSTS, $sld ) )
         {
@@ -509,13 +492,14 @@ class SecondLevelDomain
      * Parses the defined Second Level Domain string to a {@see \Niirrty\Web\SecondLevelDomain} instance. On error it
      * returns FALSE.
      *
-     * @param string $sld                The second level domain string, including the optional TLD.
-     * @param bool   $allowOnlyKnownTlds Are only known main TLDs allowed to be a parsed as a TLD?
-     * @param bool   $convertUniCode     Convert unicode SLDs to Puny code? (Default = TRUE)
+     * @param string|null $sld                The second level domain string, including the optional TLD.
+     * @param bool        $allowOnlyKnownTlds Are only known main TLDs allowed to be a parsed as a TLD?
+     * @param bool        $convertUniCode     Convert unicode SLDs to Puny code? (Default = TRUE)
      *
      * @return SecondLevelDomain|boolean
      */
     public static function Parse( ?string $sld, bool $allowOnlyKnownTlds = false, bool $convertUniCode = true )
+    : SecondLevelDomain|bool
     {
 
         if ( $convertUniCode )
@@ -523,7 +507,7 @@ class SecondLevelDomain
             $sld = idnToASCII( $sld );
         }
 
-        if ( empty( $sld ) || !\is_string( $sld ) || \is_numeric( $sld ) )
+        if ( empty( $sld ) || ! \is_string( $sld ) || \is_numeric( $sld ) )
         {
             // NULL values or none string values will always return FALSE
             return false;
@@ -531,7 +515,7 @@ class SecondLevelDomain
 
         $_sld = $sld;
 
-        if ( false !== ( $_tld = TopLevelDomain::ParseExtract( $_sld, $allowOnlyKnownTlds, false ) ) )
+        if ( false !== ( $_tld = TopLevelDomain::ParseExtract( $_sld, $allowOnlyKnownTlds ) ) )
         {
             $parsedSldOut = new SecondLevelDomain( '', $_tld );
             $parsedSldOut->states[ 'RESERVED' ] = $_tld->isReserved();
@@ -548,11 +532,11 @@ class SecondLevelDomain
             }
             else
             {
-                if ( $allowOnlyKnownTlds && !strContains( $sld, '.' ) )
+                if ( $allowOnlyKnownTlds && ! \str_contains( $sld, '.' ) )
                 {
                     return false;
                 }
-                if ( $allowOnlyKnownTlds && !TopLevelDomain::EndsWithValidTldString( $sld, false ) )
+                if ( $allowOnlyKnownTlds && !TopLevelDomain::EndsWithValidTldString( $sld ) )
                 {
                     return false;
                 }
@@ -566,12 +550,12 @@ class SecondLevelDomain
         }
 
 
-        if ( !\preg_match( '~^[a-z0-9_][a-z.0-9_-]+$~i', $_sld ) )
+        if ( ! \preg_match( '~^[a-z0-9_][a-z.0-9_-]+$~i', $_sld ) )
         {
             return false;
         }
 
-        $parsedSldOut->_hostName = $_sld;
+        $parsedSldOut->hostName = $_sld;
 
         if ( \preg_match( static::LOCAL_HOSTS, $sld ) )
         {
@@ -596,20 +580,17 @@ class SecondLevelDomain
      * The rest (Third level label (often called 'Sub domain name')) is returned by $host, if the method returns a
      * valid {@see \Niirrty\Web\SecondLevelDomain} instance.
      *
-     * @param string            $host                            The full host definition and it returns the resulting
-     *                                                           third level label
-     *                                                           (known as sub domain name) if the method returns a new
-     *                                                           instance
-     * @param SecondLevelDomain $parsedSldOut                    Returns the SecondLevelDomain if the method returns
-     *                                                           true
-     * @param boolean           $allowOnlyKnownTlds              Are only known main TLDs allowed to be a parsed as a
-     *                                                           TLD?
-     * @param bool              $convertUniCode                  Convert unicode SLDs to Puny code? (Default = TRUE)
-     *
+     * @param string                 $host               The full host definition and it returns the resulting third
+     *                                                   level label (known as sub domain name) if the method returns
+     *                                                   a new instance.
+     * @param SecondLevelDomain|null $parsedSldOut       Returns the SecondLevelDomain if the method returns true
+     * @param boolean                $allowOnlyKnownTlds Are only known main TLDs allowed to be a parsed as a TLD?
+     * @param bool                   $convertUniCode     Convert unicode SLDs to Puny code? (Default = TRUE)
      * @return bool
      */
     public static function TryParseExtract(
-        string &$host, &$parsedSldOut, bool $allowOnlyKnownTlds = false, bool $convertUniCode = false )
+        string &$host, ?SecondLevelDomain &$parsedSldOut, bool $allowOnlyKnownTlds = false, bool $convertUniCode = false )
+    : bool
     {
 
         if ( $convertUniCode )
@@ -635,7 +616,7 @@ class SecondLevelDomain
         // Work with a copy
         $_host = $host;
 
-        if ( false !== ( $_tld = TopLevelDomain::ParseExtract( $_host, $allowOnlyKnownTlds, false ) ) )
+        if ( false !== ( $_tld = TopLevelDomain::ParseExtract( $_host, $allowOnlyKnownTlds ) ) )
         {
             // Have found an usable TLD, use it
             $parsedSldOut = new SecondLevelDomain( '', $_tld );
@@ -658,7 +639,7 @@ class SecondLevelDomain
                 // Only known TLDs are accepted but the host have none
                 return false;
             }
-            if ( $allowOnlyKnownTlds && !TopLevelDomain::EndsWithValidTldString( $host ) )
+            if ( $allowOnlyKnownTlds && ! TopLevelDomain::EndsWithValidTldString( $host ) )
             {
                 // Only known TLDs are accepted but the host have none
                 return false;
@@ -667,7 +648,8 @@ class SecondLevelDomain
             $parsedSldOut = new SecondLevelDomain( '' );
         }
 
-        if ( !\preg_match( '~^[a-z0-9_][a-z.0-9_-]+$~i', $_host ) )
+        if ( !
+        \preg_match( '~^[a-z0-9_][a-z.0-9_-]+$~i', $_host ) )
         {
             // invalid host name format
             return false;
@@ -685,9 +667,9 @@ class SecondLevelDomain
             $_thild = '';
         }
 
-        $parsedSldOut->_hostName = $_sld;
+        $parsedSldOut->hostName = $_sld;
 
-        $sld = $_sld . ( $parsedSldOut->hasTLD() ? ( '.' . $parsedSldOut->_tld->toString() ) : '' );
+        $sld = $_sld . ( $parsedSldOut->hasTLD() ? ( '.' . $parsedSldOut->tld->toString() ) : '' );
 
         if ( \preg_match( static::LOCAL_HOSTS, $sld ) )
         {
@@ -723,6 +705,7 @@ class SecondLevelDomain
      * @return SecondLevelDomain|bool
      */
     public static function ParseExtract( string &$host, bool $allowOnlyKnownTlds = false, bool $convertUniCode = false )
+    : SecondLevelDomain|bool
     {
 
         if ( $convertUniCode )
@@ -748,7 +731,7 @@ class SecondLevelDomain
         // Work with a copy
         $_host = $host;
 
-        if ( false !== ( $_tld = TopLevelDomain::ParseExtract( $_host, $allowOnlyKnownTlds, false ) ) )
+        if ( false !== ( $_tld = TopLevelDomain::ParseExtract( $_host, $allowOnlyKnownTlds ) ) )
         {
             // Have found an usable TLD, use it
             $parsedSldOut = new SecondLevelDomain( '', $_tld );
@@ -798,9 +781,9 @@ class SecondLevelDomain
             $_thild = '';
         }
 
-        $parsedSldOut->_hostName = $_sld;
+        $parsedSldOut->hostName = $_sld;
 
-        $sld = $_sld . ( $parsedSldOut->hasTLD() ? ( '.' . $parsedSldOut->_tld->toString() ) : '' );
+        $sld = $_sld . ( $parsedSldOut->hasTLD() ? ( '.' . $parsedSldOut->tld->toString() ) : '' );
 
         if ( \preg_match( static::LOCAL_HOSTS, $sld ) )
         {
@@ -823,8 +806,7 @@ class SecondLevelDomain
 
     }
 
-
-    // </editor-fold>
+    #endregion
 
 
 }

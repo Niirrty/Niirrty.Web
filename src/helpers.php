@@ -1,4 +1,11 @@
 <?php
+/**
+ * @author         Ni Irrty <niirrty+code@gmail.com>
+ * @copyright      © 2016-2021, Ni Irrty
+ * @package        Niirrty\Web
+ * @since          2017-11-02
+ * @version        0.4.0
+ */
 
 
 declare( strict_types=1 );
@@ -7,7 +14,7 @@ declare( strict_types=1 );
 namespace Niirrty\Web;
 
 
-use Algo26\IdnaConvert\ToIdn;
+use \Algo26\IdnaConvert\ToIdn;
 
 
 function idnToASCII( ?string $str ): string
@@ -21,12 +28,12 @@ function idnToASCII( ?string $str ): string
     if ( \function_exists( '\\idn_to_ascii' ) )
     {
         /** @noinspection PhpComposerExtensionStubsInspection */
-        return \idn_to_ascii( $str, \IDNA_DEFAULT, \INTL_IDNA_VARIANT_UTS46 );
+        return \idn_to_ascii( $str, \IDNA_DEFAULT );
 
     }
 
     try { return ( new ToIdn() )->convert( $str ); }
-    catch ( \Throwable $ex ) { return $str; }
+    catch ( \Throwable ) { return $str; }
 
 }
 

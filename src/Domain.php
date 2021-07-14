@@ -1,10 +1,10 @@
-<?php /** @noinspection PhpUnused */
+<?php
 /**
  * @author         Ni Irrty <niirrty+code@gmail.com>
- * @copyright      © 2016-2020, Ni Irrty
+ * @copyright      © 2016-2021, Ni Irrty
  * @package        Niirrty\Web
  * @since          2017-11-02
- * @version        0.3.0
+ * @version        0.4.0
  */
 
 
@@ -35,40 +35,30 @@ final class Domain
 {
 
 
-    // <editor-fold desc="// – – –   P R I V A T E   F I E L D S   – – – – – – – – – – – – – – – – – – – – – – – –">
-
-
-    /**
-     * The name of the optional sub domain (third+ level domain label). If no sub domain exists the value is NULL.
-     *
-     * @var string|NULL
-     */
-    private $_subDomainName;
-
-    /**
-     * The contained second level domain part.
-     *
-     * @var SecondLevelDomain
-     */
-    private $_sld;
+    #region // – – –   P R I V A T E   F I E L D S   – – – – – – – – – – – – – – – – – – – – – – – –
 
     /**
      * A array of states (Detail information about the host)
      *
      * @var array
      */
-    private $states;
+    private array $states;
 
-    // </editor-fold>
+    #endregion
 
 
-    // <editor-fold desc="// – – –   P R I V A T E   C O N S T R U C T O R   – – – – – – – – – – – – – – – – – – –">
+    #region // – – –   P R I V A T E   C O N S T R U C T O R   – – – – – – – – – – – – – – – – – – –
 
-    private function __construct( ?string $subdomainName, ?SecondLevelDomain $sld = null )
+    /**
+     * Domain constructor.
+     *
+     * @param string|null $subDomainName The name of the optional sub domain (third+ level domain label).
+     *                                   If no sub domain exists the value is NULL.
+     * @param SecondLevelDomain|null $sld The contained second level domain part.
+     */
+    private function __construct( private ?string $subDomainName, private ?SecondLevelDomain $sld = null )
     {
 
-        $this->_subDomainName = $subdomainName;
-        $this->_sld = $sld;
         $value = (string) $this;
         $this->states = [
             'IPV4ADDRESS' => isIPv4Address( $value ),
@@ -85,10 +75,10 @@ final class Domain
 
     }
 
-    // </editor-fold>
+    #endregion
 
 
-    // <editor-fold desc="// – – –   P U B L I C   M E T H O D S   – – – – – – – – – – – – – – – – – – – – – – – –">
+    #region // – – –   P U B L I C   M E T H O D S   – – – – – – – – – – – – – – – – – – – – – – – –">
 
     /**
      * Returns the the Domain string value of this instance. If its defined as a fully qualified Domain
@@ -99,24 +89,24 @@ final class Domain
     public function __toString()
     {
 
-        if ( empty( $this->_subDomainName ) )
+        if ( empty( $this->subDomainName ) )
         {
 
-            if ( null === $this->_sld )
+            if ( null === $this->sld )
             {
                 return '';
             }
 
-            return (string) $this->_sld;
+            return (string) $this->sld;
 
         }
 
-        if ( null === $this->_sld )
+        if ( null === $this->sld )
         {
-            return (string) ( $this->_subDomainName ?? '' );
+            return ( $this->subDomainName ?? '' );
         }
 
-        return $this->_subDomainName . '.' . $this->_sld;
+        return $this->subDomainName . '.' . $this->sld;
 
     }
 
@@ -128,24 +118,24 @@ final class Domain
     public function toFullyQualifiedString(): string
     {
 
-        if ( empty( $this->_subDomainName ) )
+        if ( empty( $this->subDomainName ) )
         {
 
-            if ( null === $this->_sld )
+            if ( null === $this->sld )
             {
                 return '';
             }
 
-            return $this->_sld->toFullyQualifiedString();
+            return $this->sld->toFullyQualifiedString();
 
         }
 
-        if ( null === $this->_sld )
+        if ( null === $this->sld )
         {
-            return $this->_subDomainName;
+            return $this->subDomainName;
         }
 
-        return $this->_subDomainName . '.' . $this->_sld->toFullyQualifiedString();
+        return $this->subDomainName . '.' . $this->sld->toFullyQualifiedString();
 
     }
 
@@ -157,24 +147,24 @@ final class Domain
     public function toString(): string
     {
 
-        if ( empty( $this->_subDomainName ) )
+        if ( empty( $this->subDomainName ) )
         {
 
-            if ( null === $this->_sld )
+            if ( null === $this->sld )
             {
                 return '';
             }
 
-            return $this->_sld->toString();
+            return $this->sld->toString();
 
         }
 
-        if ( null === $this->_sld )
+        if ( null === $this->sld )
         {
-            return $this->_subDomainName;
+            return $this->subDomainName;
         }
 
-        return $this->_subDomainName . '.' . $this->_sld->toString();
+        return $this->subDomainName . '.' . $this->sld->toString();
 
     }
 
@@ -186,7 +176,7 @@ final class Domain
     public function getSubDomainName(): string
     {
 
-        return $this->isIPAddress() ? '' : $this->_subDomainName;
+        return $this->isIPAddress() ? '' : $this->subDomainName;
 
     }
 
@@ -234,7 +224,7 @@ final class Domain
     public function getIPAddress(): string
     {
 
-        return !$this->isIPAddress() ? '' : (string) $this;
+        return ! $this->isIPAddress() ? '' : (string) $this;
 
     }
 
@@ -246,7 +236,7 @@ final class Domain
     public function getSecondLevelDomain(): ?SecondLevelDomain
     {
 
-        return $this->_sld;
+        return $this->sld;
 
     }
 
@@ -259,12 +249,12 @@ final class Domain
     public function isFullyQualified(): bool
     {
 
-        if ( null === $this->_sld )
+        if ( null === $this->sld )
         {
             return false;
         }
 
-        return $this->_sld->isFullyQualified();
+        return $this->sld->isFullyQualified();
 
     }
 
@@ -276,12 +266,12 @@ final class Domain
     public function hasTLD(): bool
     {
 
-        if ( null === $this->_sld )
+        if ( null === $this->sld )
         {
             return false;
         }
 
-        return $this->_sld->hasTLD();
+        return $this->sld->hasTLD();
 
     }
 
@@ -293,12 +283,12 @@ final class Domain
     public function hasDoubleTLD(): bool
     {
 
-        if ( null === $this->_sld )
+        if ( null === $this->sld )
         {
             return false;
         }
 
-        return $this->_sld->hasDoubleTLD();
+        return $this->sld->hasDoubleTLD();
 
     }
 
@@ -310,12 +300,12 @@ final class Domain
     public function hasKnownTLD(): bool
     {
 
-        if ( null === $this->_sld )
+        if ( null === $this->sld )
         {
             return false;
         }
 
-        return $this->_sld->hasKnownTLD();
+        return $this->sld->hasKnownTLD();
 
     }
 
@@ -327,7 +317,7 @@ final class Domain
     public function hasSubDomain(): bool
     {
 
-        return !$this->isIPAddress() && !empty( $this->_subDomainName );
+        return ! $this->isIPAddress() && ! empty( $this->subDomainName );
 
     }
 
@@ -340,12 +330,12 @@ final class Domain
     public function isCountry(): bool
     {
 
-        if ( null === $this->_sld )
+        if ( null === $this->sld )
         {
             return false;
         }
 
-        return $this->_sld->isCountry();
+        return $this->sld->isCountry();
 
     }
 
@@ -358,12 +348,12 @@ final class Domain
     public function isGeneric(): bool
     {
 
-        if ( null === $this->_sld )
+        if ( null === $this->sld )
         {
             return false;
         }
 
-        return $this->_sld->isGeneric();
+        return $this->sld->isGeneric();
 
     }
 
@@ -375,12 +365,12 @@ final class Domain
     public function isGeographic(): bool
     {
 
-        if ( null === $this->_sld )
+        if ( null === $this->sld )
         {
             return false;
         }
 
-        return $this->_sld->isGeographic();
+        return $this->sld->isGeographic();
 
     }
 
@@ -392,12 +382,12 @@ final class Domain
     public function isLocalized(): bool
     {
 
-        if ( null === $this->_sld )
+        if ( null === $this->sld )
         {
             return false;
         }
 
-        return $this->_sld->isLocalized();
+        return $this->sld->isLocalized();
 
     }
 
@@ -440,12 +430,12 @@ final class Domain
         {
             return true;
         }
-        if ( null === $this->_sld )
+        if ( null === $this->sld )
         {
             return false;
         }
 
-        return $this->_sld->isReserved();
+        return $this->sld->isReserved();
 
     }
 
@@ -461,12 +451,12 @@ final class Domain
         {
             return true;
         }
-        if ( null === $this->_sld )
+        if ( null === $this->sld )
         {
             return false;
         }
 
-        return $this->_sld->isLocal();
+        return $this->sld->isLocal();
 
     }
 
@@ -479,12 +469,12 @@ final class Domain
     public function isUrlShortener(): bool
     {
 
-        if ( null === $this->_sld )
+        if ( null === $this->sld )
         {
             return false;
         }
 
-        return $this->_sld->isUrlShortener();
+        return $this->sld->isUrlShortener();
 
     }
 
@@ -496,32 +486,32 @@ final class Domain
     public function isDynamic(): bool
     {
 
-        if ( null === $this->_sld )
+        if ( null === $this->sld )
         {
             return false;
         }
 
-        return $this->_sld->isDynamic();
+        return $this->sld->isDynamic();
 
     }
 
-    // </editor-fold>
+    #endregion
 
 
-    // <editor-fold desc="// – – –   P U B L I C   S T A T I C   M E T H O D S   – – – – – – – – – – – – – – – – –">
+    #region // – – –   P U B L I C   S T A T I C   M E T H O D S   – – – – – – – – – – – – – – – – –">
 
     /**
      * Parses the defined Domain string to a {@see \Niirrty\Web\Domain} instance and returns if this was successful.
      *
-     * @param string  $domainString       The domain string, including optional sub domain name, domain name and TLD.
-     * @param Domain  $parsedDomainOut    Returns the Domain if the method returns true
-     * @param boolean $allowOnlyKnownTlds Are only known main TLDs allowed to be a parsed as a TLD?
-     * @param bool    $convertUniCode     Convert unicode Domain to Puny code? (Default = TRUE)
-     *
+     * @param string|null $domainString       The domain string, including optional sub domain name, domain name and TLD.
+     * @param Domain|null $parsedDomainOut    Returns the Domain if the method returns true
+     * @param boolean     $allowOnlyKnownTlds Are only known main TLDs allowed to be a parsed as a TLD?
+     * @param bool        $convertUniCode     Convert unicode Domain to Puny code? (Default = TRUE)
      * @return bool
      */
     public static function TryParse(
-        ?string $domainString, &$parsedDomainOut, bool $allowOnlyKnownTlds = false, bool $convertUniCode = true ): bool
+        ?string $domainString, ?Domain &$parsedDomainOut = null, bool $allowOnlyKnownTlds = false,
+        bool $convertUniCode = true ): bool
     {
 
         if ( $convertUniCode )
@@ -537,7 +527,7 @@ final class Domain
 
         $_domainString = $domainString;
 
-        if ( !SecondLevelDomain::TryParseExtract( $_domainString, $_sld, $allowOnlyKnownTlds, false ) )
+        if ( !SecondLevelDomain::TryParseExtract( $_domainString, $_sld, $allowOnlyKnownTlds ) )
         {
             if ( !\preg_match( "~^((\d{1,2}|1\d{2}|2([0-4]\d|5([0-4]\d|5[0-5])))(\.(\d{1,2}|1\d{2}|2([0-4]\d|5([0-4]\d|5[0-5])))){3}|([0-9a-fA-F]{1,4}(:[0-9a-fA-F]{1,4}){7}|::[0-9a-fA-F]{1,4}([0-9a-fA-F:.]+)?(/\d{1,3})?|::[0-9a-fA-F]{0,4})(/\d{1,3})?)$~",
                                $domainString ) )
@@ -581,13 +571,14 @@ final class Domain
     /**
      * Parses the defined Domain string to a {@see \Niirrty\Web\Domain} instance and returns if this was successful.
      *
-     * @param string  $domainString       The domain string, including optional sub domain name, domain name and TLD.
-     * @param boolean $allowOnlyKnownTlds Are only known main TLDs allowed to be a parsed as a TLD?
-     * @param bool    $convertUniCode     Convert unicode Domain to Puny code? (Default = TRUE)
+     * @param string|null $domainString       The domain string, including optional sub domain name, domain name and TLD.
+     * @param boolean     $allowOnlyKnownTlds Are only known main TLDs allowed to be a parsed as a TLD?
+     * @param bool        $convertUniCode     Convert unicode Domain to Puny code? (Default = TRUE)
      *
      * @return Domain|false
      */
-    public static function Parse( ?string $domainString, bool $allowOnlyKnownTlds = false, bool $convertUniCode = true )
+    public static function Parse(
+        ?string $domainString, bool $allowOnlyKnownTlds = false, bool $convertUniCode = true ): Domain|bool
     {
 
         if ( $convertUniCode )
@@ -603,7 +594,7 @@ final class Domain
 
         $_domainString = $domainString;
 
-        if ( false === ( $sld = SecondLevelDomain::ParseExtract( $_domainString, $allowOnlyKnownTlds, false ) ) )
+        if ( false === ( $sld = SecondLevelDomain::ParseExtract( $_domainString, $allowOnlyKnownTlds ) ) )
         {
             if ( !\preg_match( "~^((\d{1,2}|1\d{2}|2([0-4]\d|5([0-4]\d|5[0-5])))(\.(\d{1,2}|1\d{2}|2([0-4]\d|5([0-4]\d|5[0-5])))){3}|([0-9a-fA-F]{1,4}(:[0-9a-fA-F]{1,4}){7}|::[0-9a-fA-F]{1,4}([0-9a-fA-F:.]+)?(/\d{1,3})?|::[0-9a-fA-F]{0,4})(/\d{1,3})?)$~",
                                $domainString ) )
@@ -640,8 +631,7 @@ final class Domain
 
     }
 
-
-    // </editor-fold>
+    #endregion
 
 
 }

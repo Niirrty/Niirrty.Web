@@ -1,10 +1,10 @@
-<?php /** @noinspection PhpUnused */
+<?php
 /**
  * @author         Ni Irrty <niirrty+code@gmail.com>
- * @copyright      © 2016-2020, Ni Irrty
+ * @copyright      © 2016-2021, Ni Irrty
  * @package        Niirrty\Web
  * @since          2017-11-02
- * @version        0.3.0
+ * @version        0.4.0
  */
 
 
@@ -12,10 +12,6 @@ declare( strict_types=1 );
 
 
 namespace Niirrty\Web;
-
-
-use function Niirrty\strContains;
-use function Niirrty\strStartsWith;
 
 
 /**
@@ -27,117 +23,100 @@ class Url
 {
 
 
-    // <editor-fold desc="// – – –   P R I V A T E   F I E L D S   – – – – – – – – – – – – – – – – – – – – – – – –">
-
+    #region // – – –   P R I V A T E   F I E L D S   – – – – – – – – – – – – – – – – – – – – – – – –
 
     /**
      * All possible open redirection URLs, contained inside the main URL.
      *
      * @var Url[]
      */
-    private $openRedirectionURLs = [];
+    private array $openRedirectionURLs = [];
 
     /**
      * If open redirection bug usage was found here the result points are stored.
      *
      * @var int
      */
-    private $lastOpenRedirectResultPoints = 0;
-
-    /**
-     * The URL scheme. Default is 'http'
-     *
-     * @type string
-     */
-    private $scheme;
-
-    /**
-     * The Domain/host of the URL
-     *
-     * @type Domain
-     */
-    private $domain;
+    private int $lastOpenRedirectResultPoints = 0;
 
     /**
      * The optional port if defined.
      *
      * @type int|null
      */
-    private $port;
+    private ?int $port;
 
     /**
      * The optional auth user name part. (Usage is a security issue!)
      *
      * @type string|null
      */
-    private $authUser;
+    private ?string $authUser;
 
     /**
      * The optional auth password part. (Usage is a security issue!)
      *
      * @type string|null
      */
-    private $authPass;
+    private ?string $authPass;
 
     /**
      * The path part of the URL. If none is defined, '/' is used and returned.
      *
      * @type string
      */
-    private $path;
+    private string $path;
 
     /**
      * The query parameters as associative array.
      *
      * @type array
      */
-    private $query;
+    private array $query;
 
     /**
      * The optional URL anchor name without the leading '#'. If non is defined, NULL is used
      *
      * @type string|null
      */
-    private $anchor;
+    private ?string $anchor;
 
-    // </editor-fold>
+    #endregion
 
 
-    // <editor-fold desc="// – – –   P U B L I C   S T A T I C   F I E L D S   – – – – – – – – – – – – – – – – – –">
+    #region // – – –   P U B L I C   S T A T I C   F I E L D S   – – – – – – – – – – – – – – – – – –
 
     /**
      * This scheme is used if none is defined. (default='http')
      *
      * @var string
      */
-    public static $fallbackScheme = 'http';
+    public static string $fallbackScheme = 'http';
 
-    // </editor-fold>
+    #endregion
 
 
-    // <editor-fold desc="// – – –   C L A S S   C O N S T A N T S   – – – – – – – – – – – – – – – – – – – – – – –">
+    #region // – – –   C L A S S   C O N S T A N T S   – – – – – – – – – – – – – – – – – – – – – – –
 
     /**
      * Finds all URLs inside a string to check. It returns the following match groups: 1=protocol, 2=host, 3=path+
      */
     protected const URL_FINDER = '~(https?|ftp)://([a-z0-9_.-]+)(/[a-z0-9_./+%?&#]+)?~i';
 
-    // </editor-fold>
+    #endregion
 
 
-    // <editor-fold desc="// – – –   P R O T E C T E D   C O N S T R U C T O R   – – – – – – – – – – – – – – – – –">
+    #region // – – –   P R O T E C T E D   C O N S T R U C T O R   – – – – – – – – – – – – – – – – –
 
     /**
      * Url constructor.
      *
-     * @param string $scheme
-     * @param Domain $domain
+     * @param string $scheme The URL scheme. Default is 'http'
+     * @param Domain $domain The Domain/host of the URL.
      */
-    protected function __construct( string $scheme, Domain $domain )
+    protected function __construct( private string $scheme, private Domain $domain )
     {
 
-        $this->scheme = $scheme;
-        $this->domain = $domain;
         $this->port = null;
         $this->authUser = null;
         $this->authPass = null;
@@ -147,10 +126,10 @@ class Url
 
     }
 
-    // </editor-fold>
+    #endregion
 
 
-    // <editor-fold desc="// – – –   P U B L I C   M E T H O D S   – – – – – – – – – – – – – – – – – – – – – – – –">
+    #region // – – –   P U B L I C   M E T H O D S   – – – – – – – – – – – – – – – – – – – – – – – –
 
     /**
      * Returns if URL contains some login data usable with AUTHTYPE BASIC. This is a security issue!
@@ -190,22 +169,13 @@ class Url
             return true;
         }
 
-        switch ( $this->scheme )
+        return match ( $this->scheme )
         {
-
-            case UrlScheme::HTTP:
-                return ( $this->port === 80 );
-
-            case UrlScheme::SSL:
-                return ( $this->port === 443 );
-
-            case UrlScheme::FTP:
-                return ( $this->port === 21 );
-
-            default :
-                return false;
-
-        }
+            UrlScheme::HTTP => ( $this->port === 80  || $this->port === 8080 ),
+            UrlScheme::SSL  => ( $this->port === 443 || $this->port === 8443 ),
+            UrlScheme::FTP  => ( $this->port === 21 ),
+            default         => false,
+        };
 
     }
 
@@ -241,15 +211,15 @@ class Url
     public function extractUrlShortenerTarget(): ?Url
     {
 
-        if ( !$this->isUrlShortenerAddress() )
+        if ( ! $this->isUrlShortenerAddress() )
         {
             return null;
         }
 
         try
         {
-            $data = \get_headers( (string) $this, 1 );
-            if ( !isset( $data[ 'Location' ] ) )
+            $data = \get_headers( (string) $this, true );
+            if ( ! isset( $data[ 'Location' ] ) )
             {
                 return null;
             }
@@ -260,10 +230,8 @@ class Url
 
             return $url;
         }
-        catch ( \Throwable $ex )
+        catch ( \Throwable )
         {
-            unset( $ex );
-
             return null;
         }
 
@@ -288,11 +256,10 @@ class Url
      * check if the redirection works. If you want to real check it out you can use the
      * {@see \Niirrty\Web\Url::checkForOpenRedirect()} method. But its important to read its documentation before!
      *
-     * @param int &$resultPoints returns the max. probability of a URL injection (0-10 and > 4 means its possible)
-     *
+     * @param int|null $resultPoints returns the max. probability of a URL injection (0-10 and > 4 means its possible)
      * @return boolean
      */
-    public function isPossibleOpenRedirect( &$resultPoints ): bool
+    public function isPossibleOpenRedirect( ?int &$resultPoints = 0 ): bool
     {
 
         // We are working with result points (> 4 returns TRUE)
@@ -317,7 +284,7 @@ class Url
         // Init array to hold some founded param names key) and associated resultpoints
         $founds = [];
         $highest = 0;
-        $query = \is_array( $this->query ) ? (array) $this->query : [];
+        $query = \is_array( $this->query ) ? $this->query : [];
 
         // OK lets check all GET/query parameters
         foreach ( $query as $key => $value )
@@ -433,10 +400,11 @@ class Url
      *
      * @return Url[]
      */
-    public function getOpenRedirectionURLs()
+    public function getOpenRedirectionURLs(): array
     {
 
         return $this->openRedirectionURLs;
+
     }
 
     /**
@@ -456,7 +424,7 @@ class Url
      *
      * @return boolean
      */
-    public function checkForOpenRedirect( $urlForTestContents, $testContents, $useAsRegex = false )
+    public function checkForOpenRedirect( string $urlForTestContents, string $testContents, bool $useAsRegex = false ): bool
     {
 
         if ( \count( $this->openRedirectionURLs ) < 1 )
@@ -493,7 +461,8 @@ class Url
         // OK now we can reassign the origin headers
         $this->query = $oldQuery;
 
-        if ( false === ( $headers = \get_headers( $url, 1 ) ) )
+        /** @noinspection PhpIfWithCommonPartsInspection */
+        if ( false === ( $headers = \get_headers( $url, true ) ) )
         {
 
             // If the head request fails get headers from GET request
@@ -504,7 +473,7 @@ class Url
             );
 
             // Get header by GET request
-            if ( false === ( $headers = \get_headers( $url, 1 ) ) )
+            if ( false === ( $headers = \get_headers( $url, true ) ) )
             {
                 $handleHeaders = false;
             }
@@ -513,7 +482,7 @@ class Url
         else
         {
 
-            // reset get_header to use defaut GET request
+            // reset get_header to use default GET request
             \stream_context_set_default(
                 [
                     'http' => [ 'method' => 'GET' ],
@@ -535,7 +504,7 @@ class Url
                 return true;
             }
 
-            if ( isset( $headers[ 'refresh' ] ) && strContains( $headers[ 'refresh' ], $urlForTestContents ) )
+            if ( isset( $headers[ 'refresh' ] ) && \str_contains( $headers[ 'refresh' ], $urlForTestContents ) )
             {
                 // Refresh header to defined URL is defined. Now we know its a open redirection bug usage
                 return true;
@@ -559,7 +528,7 @@ class Url
             }
         }
 
-        $regex = '~<meta\s+http-equiv=(\'|")?refresh(\'|")?\s+content=(\'|")\d+;\s*url='
+        $regex = '~<meta\s+http-equiv=([\'"])?refresh([\'"])?\s+content=([\'"])\d+;\s*url='
                  . \preg_quote( $url )
                  . '~i';
 
@@ -644,17 +613,13 @@ class Url
             $this->scheme = static::$fallbackScheme;
         }
 
-        switch ( \strtolower( $this->scheme ) )
+        return match ( \strtolower( $this->scheme ) )
         {
-            case UrlScheme::HTTP :
-                return 80;
-            case UrlScheme::SSL  :
-                return 443;
-            case UrlScheme::FTP  :
-                return 21;
-            default              :
-                return 0;
-        }
+            UrlScheme::HTTP => 80,
+            UrlScheme::SSL  => 443,
+            UrlScheme::FTP  => 21,
+            default         => 0,
+        };
 
     }
 
@@ -695,7 +660,7 @@ class Url
             return '/';
         }
 
-        if ( !strStartsWith( $this->path, '/' ) )
+        if ( !\str_starts_with( $this->path, '/' ) )
         {
             return '/' . $this->path;
         }
@@ -922,10 +887,10 @@ class Url
 
     }
 
-    // </editor-fold>
+    #endregion
 
 
-    // <editor-fold desc="// – – –   P U B L I C   S T A T I C   M E T H O D S   – – – – – – – – – – – – – – – – –">
+    #region // – – –   P U B L I C   S T A T I C   M E T H O D S   – – – – – – – – – – – – – – – – –
 
     /**
      * Finds all valid URLs inside the defined text and returns it as a string array.
@@ -935,7 +900,7 @@ class Url
      *
      * @return array
      */
-    public static function FindAllUrls( string $text, array $ignoreDomains = [] )
+    public static function FindAllUrls( string $text, array $ignoreDomains = [] ): array
     {
 
         // Init the required variables
@@ -985,7 +950,7 @@ class Url
                 {
                     continue;
                 }
-                $result[] = 'http://' . $match;
+                $result[] = static::$fallbackScheme . '://' . $match;
             }
         }
 
@@ -997,11 +962,10 @@ class Url
      * Parses a URL string and returns the resulting {@see \Niirrty\Web\Url} instance. If parsing fails, it returns
      * boolean FALSE.
      *
-     * @param string $urlString The URL string to parse
-     *
+     * @param string|null $urlString The URL string to parse
      * @return Url|bool Returns the URL if parsing was successful, FALSE otherwise.
      */
-    public static function Parse( ?string $urlString )
+    public static function Parse( ?string $urlString ): Url|bool
     {
 
         // Null and empty string are not a valid URL
@@ -1050,7 +1014,7 @@ class Url
         {
             $scheme = \strtolower( $objectData[ 'scheme' ] );
         }
-        $domain = Domain::Parse( $objectData[ 'host' ], false );
+        $domain = Domain::Parse( $objectData[ 'host' ] );
         if ( !( $domain instanceof Domain ) )
         {
             // if no usable domain is defined, return FALSE
@@ -1105,16 +1069,14 @@ class Url
      *
      * @return array|bool Returns the resulting array, or FALSE, if parsing fails
      */
-    public static function getUrlInfo( $url )
+    public static function getUrlInfo( string $url ): bool|array
     {
 
         // Encode the URL
-        /** @noinspection NotOptimalRegularExpressionsInspection */
         $encUrl = \preg_replace_callback(
             '%[^:/@?&=#]+%usD',
             function ( $match )
             {
-
                 return \urlencode( $match[ 0 ] );
             },
             $url
@@ -1131,10 +1093,10 @@ class Url
         return $parts;
     }
 
-    // </editor-fold>
+    #endregion
 
 
-    private static function parseQuery( $query )
+    private static function parseQuery( $query ): array
     {
 
         if ( empty( $query ) )

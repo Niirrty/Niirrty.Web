@@ -1,10 +1,10 @@
 <?php
 /**
  * @author         Ni Irrty <niirrty+code@gmail.com>
- * @copyright      © 2016-2020, Ni Irrty
+ * @copyright      © 2016-2021, Ni Irrty
  * @package        Niirrty\Web
  * @since          2017-11-02
- * @version        0.3.0
+ * @version        0.4.0
  */
 
 
@@ -12,10 +12,6 @@ declare( strict_types=1 );
 
 
 namespace Niirrty\Web;
-
-
-use function Niirrty\strContains;
-use function Niirrty\strEndsWith;
 
 
 /**
@@ -37,27 +33,26 @@ class TopLevelDomain
 {
 
 
-    // <editor-fold desc="// – – –   P R I V A T E   F I E L D S   – – – – – – – – – – – – – – – – – – – – – – – –">
-
+    #region // – – –   P R I V A T E   F I E L D S   – – – – – – – – – – – – – – – – – – – – – – – –
 
     /**
      * The TopLevelDomain value string.
      *
      * @var string
      */
-    private $value;
+    private string $value;
 
     /**
      * All state info about current TopLevelDomain.
      *
      * @var array
      */
-    private $states;
+    private array $states;
 
-    // </editor-fold>
+    #endregion
 
 
-    // <editor-fold desc="// – – –   P R I V A T E   C O N S T A N T S   – – – – – – – – – – – – – – – – – – – – –">
+    #region // – – –   P R I V A T E   C O N S T A N T S   – – – – – – – – – – – – – – – – – – – – –
 
     /**
      * Known TLD formats regexp part.
@@ -115,15 +110,15 @@ class TopLevelDomain
      */
     protected const DOUBLE_TLDS = '((co|or)\.at|(com|nom|org)\.es|(ac|co|gov|ltd|me|net|nic|nhs|org|plc|sch)\.uk|(biz|com|info|net|org)\.pl|(com|net|org)\.vc|(com|org)\.au|(com|tv|net)\.br)';
 
-    // </editor-fold>
+    #endregion
 
 
-    // <editor-fold desc="// – – –   P U B L I C   C O N S T R U C T O R   – – – – – – – – – – – – – – – – – – – –">
+    #region // – – –   P U B L I C   C O N S T R U C T O R   – – – – – – – – – – – – – – – – – – – –
 
     /**
      * Init a new instance.
      *
-     * @param string $tldValue The TopLevelDomain string value, to associate the instance with.
+     * @param string|null $tldValue The TopLevelDomain string value, to associate the instance with.
      */
     private function __construct( ?string $tldValue )
     {
@@ -132,10 +127,10 @@ class TopLevelDomain
 
     }
 
-    // </editor-fold>
+    #endregion
 
 
-    // <editor-fold desc="// – – –   P U B L I C   M E T H O D S   – – – – – – – – – – – – – – – – – – – – – – – –">
+    #region // – – –   P U B L I C   M E T H O D S   – – – – – – – – – – – – – – – – – – – – – – – –
 
     /**
      * Returns the the TopLevelDomain string value of this instance. If its defined as a fully qualified TLD
@@ -279,12 +274,12 @@ class TopLevelDomain
 
     }
 
-    // </editor-fold>
+    #endregion
 
 
-    // <editor-fold desc="// – – –   P R I V A T E   S T A T I C   M E T H O D S   – – – – – – – – – – – – – – – –">
+    #region // – – –   P R I V A T E   S T A T I C   M E T H O D S   – – – – – – – – – – – – – – – –
 
-    private static function initStates()
+    private static function initStates(): array
     {
 
         // Init the states with the default values
@@ -301,11 +296,11 @@ class TopLevelDomain
 
     }
 
-    private static function parseForStates( TopLevelDomain $tld )
+    private static function parseForStates( TopLevelDomain $tld ): TopLevelDomain
     {
 
         // FULLYQUALIFIED
-        if ( strEndsWith( $tld->value, '.' ) )
+        if ( \str_ends_with( $tld->value, '.' ) )
         {
             // Its a full qualified TLD, ending with a dot, remember it…
             $tld->states[ 'FULLYQUALIFIED' ] = true;
@@ -369,7 +364,7 @@ class TopLevelDomain
             $tld->states[ 'KNOWN' ] = true;
         }
 
-        if ( strContains( $tld->value, 'xn--' ) )
+        if ( \str_contains( $tld->value, 'xn--' ) )
         {
             $tld->states[ 'LOCALIZED' ] = true;
             $tld->states[ 'KNOWN' ] = true;
@@ -379,19 +374,18 @@ class TopLevelDomain
 
     }
 
-    // </editor-fold>
+    #endregion
 
 
-    // <editor-fold desc="// – – –   P U B L I C   S T A T I C   M E T H O D S   – – – – – – – – – – – – – – – – –">
+    #region // – – –   P U B L I C   S T A T I C   M E T H O D S   – – – – – – – – – – – – – – – – –
 
     /**
      * Parses the defined TLD string to a {@see \Niirrty\Web\TopLevelDomain} instance. On error it returns FALSE.
      *
-     * @param string         $tld            The TLD to parse.
-     * @param TopLevelDomain $parsedTldOut   Returns the TopLevelDomain if the method returns true
-     * @param bool           $allowOnlyKnown Are only known main TLDs allowed to be a parsed as a TLD?
-     * @param bool           $convertUniCode Convert unicode TLDs to Puny code? (Default = TRUE)
-     *
+     * @param string|null         $tld            The TLD to parse.
+     * @param TopLevelDomain|null $parsedTldOut   Returns the TopLevelDomain if the method returns true
+     * @param bool                $allowOnlyKnown Are only known main TLDs allowed to be a parsed as a TLD?
+     * @param bool                $convertUniCode Convert unicode TLDs to Puny code? (Default = TRUE)
      * @return bool   Return TRUE on success ($parsedTldOut returns the TopLevelDomain) or FALSE otherwise.
      */
     public static function TryParse(
@@ -431,7 +425,7 @@ class TopLevelDomain
         $parsedTldOut->states = static::initStates();
 
         // Find the corresponding states and return the TLD instance
-        static::parseForStates( $parsedTldOut );
+        $parsedTldOut = static::parseForStates( $parsedTldOut );
 
         return true;
 
@@ -440,13 +434,14 @@ class TopLevelDomain
     /**
      * Parses the defined TLD string to a {@see \Niirrty\Web\TopLevelDomain} instance. On error it returns FALSE.
      *
-     * @param string $tld            The TLD to parse.
-     * @param bool   $allowOnlyKnown Are only known main TLDs allowed to be a parsed as a TLD?
-     * @param bool   $convertUniCode Convert unicode TLDs to Puny code? (Default = TRUE)
+     * @param string|null $tld            The TLD to parse.
+     * @param bool        $allowOnlyKnown Are only known main TLDs allowed to be a parsed as a TLD?
+     * @param bool        $convertUniCode Convert unicode TLDs to Puny code? (Default = TRUE)
      *
      * @return TopLevelDomain|bool   Returns the TopLevelDomain or FALSE on error.
      */
-    public static function Parse( ?string $tld, bool $allowOnlyKnown = false, bool $convertUniCode = true )
+    public static function Parse(
+        ?string $tld, bool $allowOnlyKnown = false, bool $convertUniCode = true ) : TopLevelDomain|bool
     {
 
         if ( $convertUniCode )
@@ -481,20 +476,18 @@ class TopLevelDomain
         $parsedTldOut->states = static::initStates();
 
         // Find the corresponding states and return the TLD instance
-        static::parseForStates( $parsedTldOut );
-
-        return $parsedTldOut;
+        return static::parseForStates( $parsedTldOut );
 
     }
 
     /**
      * Extracts the TopLevelDomain from defined host name string.
      *
-     * @param string         $hostString                   The Host name string value reference to parse. After parsing,
+     * @param string              $hostString              The Host name string value reference to parse. After parsing,
      *                                                     a maybe defined TopLevelDomain is removed from this variable.
-     * @param TopLevelDomain $parsedTldOut                 Returns the TopLevelDomain if the method returns true
-     * @param bool           $allowOnlyKnown               Are only known main TLDs allowed to be a parsed as a TLD?
-     * @param bool           $convertUniCode               Convert unicode Hosts to Puny code? (Default = FALSE)
+     * @param TopLevelDomain|null $parsedTldOut            Returns the TopLevelDomain if the method returns true
+     * @param bool                $allowOnlyKnown          Are only known main TLDs allowed to be a parsed as a TLD?
+     * @param bool                $convertUniCode          Convert unicode Hosts to Puny code? (Default = FALSE)
      *
      * @return bool   Return TRUE on success ($parsedTldOut returns the TopLevelDomain) or FALSE otherwise.
      */
@@ -540,7 +533,7 @@ class TopLevelDomain
         $parsedTldOut->states = static::initStates();
 
         // Find the corresponding states and return the TLD instance
-        static::parseForStates( $parsedTldOut );
+        $parsedTldOut = static::parseForStates( $parsedTldOut );
 
         return true;
 
@@ -557,7 +550,7 @@ class TopLevelDomain
      * @return TopLevelDomain|bool   Returns the TopLevelDomain or FALSE on error.
      */
     public static function ParseExtract(
-        string &$hostString, bool $allowOnlyKnown = false, bool $convertUniCode = false )
+        string &$hostString, bool $allowOnlyKnown = false, bool $convertUniCode = false ): TopLevelDomain|bool
     {
 
         if ( $convertUniCode )
@@ -597,9 +590,7 @@ class TopLevelDomain
         $parsedTldOut->states = static::initStates();
 
         // Find the corresponding states and return the TLD instance
-        static::parseForStates( $parsedTldOut );
-
-        return $parsedTldOut;
+        return static::parseForStates( $parsedTldOut );
 
     }
 
@@ -626,8 +617,7 @@ class TopLevelDomain
 
     }
 
-
-    // </editor-fold>
+    #endregion
 
 
 }

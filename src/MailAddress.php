@@ -1,10 +1,10 @@
 <?php
 /**
  * @author         Ni Irrty <niirrty+code@gmail.com>
- * @copyright      © 2016-2020, Ni Irrty
+ * @copyright      © 2016-2021, Ni Irrty
  * @package        Niirrty\Web
  * @since          2017-11-02
- * @version        0.3.0
+ * @version        0.4.0
  */
 
 
@@ -14,7 +14,7 @@ declare( strict_types=1 );
 namespace Niirrty\Web;
 
 
-use Niirrty\Type;
+use \Niirrty\Type;
 
 
 /**
@@ -24,27 +24,7 @@ class MailAddress
 {
 
 
-    // <editor-fold desc="// – – –   P R O T E C T E D   F I E L D S   – – – – – – – – – – – – – – – – – – – – – –">
-
-
-    /**
-     * The mail address user part (every thing before the first @)
-     *
-     * @type string
-     */
-    protected $_userPart;
-
-    /**
-     * The domain part of the mail address.
-     *
-     * @type Domain
-     */
-    protected $_domainPart;
-
-    // </editor-fold>
-
-
-    // <editor-fold desc="// – – –   P R I V A T E   C O N S T R U C T O R   – – – – – – – – – – – – – – – – – – –">
+    #region // – – –   P R I V A T E   C O N S T R U C T O R   – – – – – – – – – – – – – – – – – – –
 
     /**
      * Init a new instance.
@@ -52,18 +32,12 @@ class MailAddress
      * @param string $userPart   The mail address user part (every thing before the first @)
      * @param Domain $domainPart The domain part of the mail address.
      */
-    private function __construct( $userPart, Domain $domainPart )
-    {
+    private function __construct( protected string $userPart, protected Domain $domainPart ) { }
 
-        $this->_userPart = $userPart;
-        $this->_domainPart = $domainPart;
-
-    }
-
-    // </editor-fold>
+    #endregion
 
 
-    // <editor-fold desc="// – – –   P U B L I C   M E T H O D S   – – – – – – – – – – – – – – – – – – – – – – – –">
+    #region // – – –   P U B L I C   M E T H O D S   – – – – – – – – – – – – – – – – – – – – – – – –
 
     /**
      * Returns the mail address user part (every thing before the first @)
@@ -73,7 +47,7 @@ class MailAddress
     public function getUser(): string
     {
 
-        return $this->_userPart;
+        return $this->userPart;
 
     }
 
@@ -85,7 +59,7 @@ class MailAddress
     public function getDomain(): Domain
     {
 
-        return $this->_domainPart;
+        return $this->domainPart;
 
     }
 
@@ -97,7 +71,7 @@ class MailAddress
     public function __toString()
     {
 
-        return $this->_userPart . '@' . $this->_domainPart->toString();
+        return $this->userPart . '@' . $this->domainPart->toString();
 
     }
 
@@ -109,7 +83,7 @@ class MailAddress
      *
      * @return boolean
      */
-    public function equals( $value, bool $strict = false ): bool
+    public function equals( mixed $value, bool $strict = false ): bool
     {
 
         if ( null === $value )
@@ -120,9 +94,9 @@ class MailAddress
         if ( $value instanceof MailAddress )
         {
             return
-                ( $value->_userPart === $this->_userPart )
+                ( $value->userPart === $this->userPart )
                 &&
-                ( ( (string) $value->_domainPart ) === ( (string) $this->_domainPart ) );
+                ( ( (string) $value->domainPart ) === ( (string) $this->domainPart ) );
         }
 
         if ( $strict )
@@ -130,16 +104,15 @@ class MailAddress
             return false;
         }
 
-        $val = null;
 
         if ( \is_string( $value ) )
         {
             if ( false !== ( $val = MailAddress::Parse( $value ) ) )
             {
                 return
-                    ( $val->_userPart === $this->_userPart )
+                    ( $val->userPart === $this->userPart )
                     &&
-                    ( ( (string) $val->_domainPart ) === ( (string) $this->_domainPart ) );
+                    ( ( (string) $val->domainPart ) === ( (string) $this->domainPart ) );
             }
 
             return false;
@@ -147,21 +120,19 @@ class MailAddress
 
         if ( $value instanceof Domain )
         {
-            return ( ( (string) $value ) === ( (string) $this->_domainPart ) );
+            return ( ( (string) $value ) === ( (string) $this->domainPart ) );
         }
 
         try
         {
             $typeInfo = new Type( $value );
-            if ( !$typeInfo->hasAssociatedString() )
+            if ( ! $typeInfo->hasAssociatedString() )
             {
                 return false;
             }
         }
-        catch ( \Throwable $ex )
+        catch ( \Throwable )
         {
-            unset ( $ex );
-
             return false;
         }
 
@@ -171,16 +142,16 @@ class MailAddress
         }
 
         return
-            ( $val->_userPart === $this->_userPart )
+            ( $val->userPart === $this->userPart )
             &&
-            ( ( (string) $val->_domainPart ) === ( (string) $this->_domainPart ) );
+            ( ( (string) $val->domainPart ) === ( (string) $this->domainPart ) );
 
     }
 
-    // </editor-fold>
+    #endregion
 
 
-    // <editor-fold desc="// – – –   P U B L I C   S T A T I C   M E T H O D S   – – – – – – – – – – – – – – – – –">
+    #region // – – –   P U B L I C   S T A T I C   M E T H O D S   – – – – – – – – – – – – – – – – –
 
     /**
      * Parses a string with an e-mail address to a {@see \Niirrty\Web\MailAddress} instance.
@@ -195,9 +166,10 @@ class MailAddress
      */
     public static function Parse(
         string $mailAddressString, bool $requireTLD = true, bool $requireKnownTLD = true, bool $allowReserved = false )
+    : bool|MailAddress
     {
 
-        if ( false === ( $firstAtIndex = \Niirrty\strPos( $mailAddressString, '@' ) ) )
+        if ( -1 === ( $firstAtIndex = \Niirrty\strPos( $mailAddressString, '@' ) ) )
         {
             // If $mailAddressString do not contain the @ char, parsing fails
             return false;
@@ -249,7 +221,7 @@ class MailAddress
      *
      * @return MailAddress[] Return the found mail addresses as a \Niirrty\Web\MailAddress array.
      */
-    public static function ExtractAllFromString( $string )
+    public static function ExtractAllFromString( string $string ): array
     {
 
         // Init the resulting addresses array
@@ -277,7 +249,7 @@ class MailAddress
     }
 
 
-    // </editor-fold>
+    #endregion
 
 
 }
