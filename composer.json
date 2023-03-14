@@ -10,9 +10,9 @@
       }
    ],
    "require": {
-      "php": ">=8.0",
-      "niirrty/niirrty.core": "~0.4",
-      "algo26-matthias/idna-convert": "v3.0.5"
+      "php": ">=8.1",
+      "niirrty/niirrty.core": "^0.5",
+      "algo26-matthias/idna-convert": "v4.0.0"
    },
    "autoload": {
       "files": [
