@@ -1,10 +1,9 @@
 <?php
 /**
  * @author         Ni Irrty <niirrty+code@gmail.com>
- * @copyright      © 2016-2021, Ni Irrty
+ * @copyright      © 2016-2024, Ni Irrty
  * @package        Niirrty\Web
  * @since          2017-11-02
- * @version        0.4.0
  */
 
 

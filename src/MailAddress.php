@@ -1,10 +1,9 @@
 <?php
 /**
  * @author         Ni Irrty <niirrty+code@gmail.com>
- * @copyright      © 2016-2021, Ni Irrty
+ * @copyright      © 2016-2024, Ni Irrty
  * @package        Niirrty\Web
  * @since          2017-11-02
- * @version        0.4.0
  */
 
 
@@ -79,7 +78,7 @@ class MailAddress
      * Checks if the defined value is equal to current mail address value.
      *
      * @param mixed   $value  The value to check against.
-     * @param boolean $strict Can only be equal if value is of type {@see \Niirrty\Web\MailAddress}
+     * @param boolean $strict Can only be equal if value is of type {@see MailAddress}
      *
      * @return boolean
      */
@@ -154,7 +153,7 @@ class MailAddress
     #region // – – –   P U B L I C   S T A T I C   M E T H O D S   – – – – – – – – – – – – – – – – –
 
     /**
-     * Parses a string with an e-mail address to a {@see \Niirrty\Web\MailAddress} instance.
+     * Parses a string with an e-mail address to a {@see MailAddress} instance.
      *
      * @param string  $mailAddressString The e-mail address string.
      * @param boolean $requireTLD        Must the mail address contain an TLD to be parsed as valid? (default=true)
@@ -162,11 +161,11 @@ class MailAddress
      *                                   (default=true)
      * @param boolean $allowReserved     Are reserved hosts/domains/TLDs allowed to be parsed as valid? (default=false)
      *
-     * @return MailAddress|bool returns the MailAddress instance, or FALSE if parsing fails.
+     * @return MailAddress|false returns the MailAddress instance, or FALSE if parsing fails.
      */
     public static function Parse(
         string $mailAddressString, bool $requireTLD = true, bool $requireKnownTLD = true, bool $allowReserved = false )
-    : bool|MailAddress
+        : false|MailAddress
     {
 
         if ( -1 === ( $firstAtIndex = \Niirrty\strPos( $mailAddressString, '@' ) ) )
@@ -194,14 +193,12 @@ class MailAddress
             return false;
         }
 
-        /** @noinspection PhpUndefinedVariableInspection */
         if ( $requireTLD && !$_domain->hasTLD() )
         {
             // If a TLD is required but not defined, parsing fails
             return false;
         }
-        /** @noinspection PhpUndefinedVariableInspection */
-        if ( !$allowReserved && $_domain->isReserved() )
+        if ( ! $allowReserved && $_domain->isReserved() )
         {
             // If the domain part points to a reserved domain name or TLD, parsing fails if this is forbidden
             return false;
@@ -209,7 +206,6 @@ class MailAddress
 
         // All is fine, return the resulting MailAddress instance.
 
-        /** @noinspection PhpUndefinedVariableInspection */
         return new MailAddress( $user, $_domain );
 
     }

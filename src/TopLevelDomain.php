@@ -1,10 +1,9 @@
 <?php
 /**
  * @author         Ni Irrty <niirrty+code@gmail.com>
- * @copyright      © 2016-2021, Ni Irrty
+ * @copyright      © 2016-2024, Ni Irrty
  * @package        Niirrty\Web
  * @since          2017-11-02
- * @version        0.4.0
  */
 
 
@@ -13,6 +12,8 @@ declare( strict_types=1 );
 
 namespace Niirrty\Web;
 
+
+use Niirrty\IToString;
 
 /**
  * This class defines a TopLevelDomain part of a host name.
@@ -29,7 +30,7 @@ namespace Niirrty\Web;
  *
  * All this states can be accessed via associated is*() methods.
  */
-class TopLevelDomain
+class TopLevelDomain implements IToString
 {
 
 
@@ -59,56 +60,56 @@ class TopLevelDomain
      *
      * @type string
      */
-    protected const KNOWN_FORMAT = 'xn--[a-z\d-]{3,24}|[a-z]{2,12}|wow64';
+    protected const string KNOWN_FORMAT = 'xn--[a-z\d-]{3,24}|[a-z]{2,12}|wow64';
 
     /**
      * Known generic TLDs regexp part.
      *
      * @type string
      */
-    protected const KNOWN_GENERIC = 'com|edu|gov|int|mil|net|org';
+    protected const string KNOWN_GENERIC = 'com|edu|gov|int|mil|net|org';
 
     /**
      * Known reserved TLDs regexp part.
      *
      * @type string
      */
-    protected const KNOWN_RESERVED = 'arpa|example|test|tld';
+    protected const string KNOWN_RESERVED = 'arpa|example|test|tld';
 
     /**
      * Known country specific TLDs regexp part.
      *
      * @type string
      */
-    protected const KNOWN_COUNTRY = 'a[cdefgilmnoqrstuwxz]|b[abmnorstvwyzd-j]|c[acdrf-ik-ou-z]|d[ejkmoz]|e[cegrstu]|f[ijkmor]|g[abdefghilmnpqrstuwy]|h[kmnrtu]|i[delmnoqrst]|j[emop]|k[eghimnqrwz]|l[abcikrstuvy]|m[acdeghk-z]|n[acefgilopruz]|om|p[aefghklmnrstwy]|qa|r[eosuw]|s[xyza-eg-or-v]|t[cdfghrstvwzj-p]|u[agksyz]|v[aceginu]|w[fs]|y[etu]|z[amrw]|co\.uk|com.au';
+    protected const string KNOWN_COUNTRY = 'a[cdefgilmnoqrstuwxz]|b[abmnorstvwyzd-j]|c[acdrf-ik-ou-z]|d[ejkmoz]|e[cegrstu]|f[ijkmor]|g[abdefghilmnpqrstuwy]|h[kmnrtu]|i[delmnoqrst]|j[emop]|k[eghimnqrwz]|l[abcikrstuvy]|m[acdeghk-z]|n[acefgilopruz]|om|p[aefghklmnrstwy]|qa|r[eosuw]|s[xyza-eg-or-v]|t[cdfghrstvwzj-p]|u[agksyz]|v[aceginu]|w[fs]|y[etu]|z[amrw]|co\.uk|com.au';
 
     /**
      * Known country specific puny-coded unicode TLDs regexp part.
      *
      * @type string
      */
-    protected const KNOWN_LC_COUNTRY = 'xn--(3e0b707e|45brj9c|54b7fta0cc|80ao21a|90a(is|3ac)|clchc0ea0b2g2a9gcd|d1alf|fiq(s8|z9)s|fpcrj9c3d|fzc2c9e2c|gecrj9c|h2brj9c|j1amh|j6w193g|kpr(w13d|y57d)|l1acc|lgbbat1ad8j|mgb(2ddes|9awbf|a3a4f16a|aam7a8h|ai9azgqp6j|ayh7gpa|bh1a71e|c0a9azcg|erp4a5d4ar|pl2fh|tx2b|x4cd0ab|xkc2al3hye2a)|node|o3cw4h|ogbpf8fl|p1ai|pgbs0dh|s9brj9c|wgb(h1c|l6a)|xkc2dl3a5ee0h|yfro4i67o|ygbi2ammx|y9a3aq)';
+    protected const string KNOWN_LC_COUNTRY = 'xn--(3e0b707e|45brj9c|54b7fta0cc|80ao21a|90a(is|3ac)|clchc0ea0b2g2a9gcd|d1alf|fiq(s8|z9)s|fpcrj9c3d|fzc2c9e2c|gecrj9c|h2brj9c|j1amh|j6w193g|kpr(w13d|y57d)|l1acc|lgbbat1ad8j|mgb(2ddes|9awbf|a3a4f16a|aam7a8h|ai9azgqp6j|ayh7gpa|bh1a71e|c0a9azcg|erp4a5d4ar|pl2fh|tx2b|x4cd0ab|xkc2al3hye2a)|node|o3cw4h|ogbpf8fl|p1ai|pgbs0dh|s9brj9c|wgb(h1c|l6a)|xkc2dl3a5ee0h|yfro4i67o|ygbi2ammx|y9a3aq)';
 
     /**
      * Known generic puny-coded unicode TLDs regexp part.
      *
      * @type string
      */
-    protected const KNOWN_LC_GENERIC = 'xn--(3ds443g|55qx5d|6frz82g|6qq986b3xl|80asehdb|80aswg|c1avg|czr694b|czru2d|d1acj3b|fiq228c5hs|i1b6b1a6a2e|io0a7i|ngbc5azd|nqv7f|mgbab2bd|q9jyb4c|rhqv96g|ses554g)';
+    protected const string KNOWN_LC_GENERIC = 'xn--(3ds443g|55qx5d|6frz82g|6qq986b3xl|80asehdb|80aswg|c1avg|czr694b|czru2d|d1acj3b|fiq228c5hs|i1b6b1a6a2e|io0a7i|ngbc5azd|nqv7f|mgbab2bd|q9jyb4c|rhqv96g|ses554g)';
 
     /**
      * Known geographic TLDs regexp part.
      *
      * @type string
      */
-    protected const KNOWN_GEOGRAPHIC = 'asia|bayern|berlin|brussels|budapest|bzh|cat|cologne|cymru|hamburg|kiwi|koeln|london|moscow|nagoya|nyc|okinawa|paris|ruhr|saarland|tirol|tokyo|vegas|vlaanderen|wales|wien|yokohama|москва|xn--80adxhks';
+    protected const string KNOWN_GEOGRAPHIC = 'asia|bayern|berlin|brussels|budapest|bzh|cat|cologne|cymru|hamburg|kiwi|koeln|london|moscow|nagoya|nyc|okinawa|paris|ruhr|saarland|tirol|tokyo|vegas|vlaanderen|wales|wien|yokohama|москва|xn--80adxhks';
 
     /**
      * Known double TLDs regexp part.
      *
      * @type string
      */
-    protected const DOUBLE_TLDS = '((co|or)\.at|(com|nom|org)\.es|(ac|co|gov|ltd|me|net|nic|nhs|org|plc|sch)\.uk|(biz|com|info|net|org)\.pl|(com|net|org)\.vc|(com|org)\.au|(com|tv|net)\.br)';
+    protected const string DOUBLE_TLDS = '((co|or)\.at|(com|nom|org)\.es|(ac|co|gov|ltd|me|net|nic|nhs|org|plc|sch)\.uk|(biz|com|info|net|org)\.pl|(com|net|org)\.vc|(com|org)\.au|(com|tv|net)\.br)';
 
     #endregion
 
@@ -380,7 +381,7 @@ class TopLevelDomain
     #region // – – –   P U B L I C   S T A T I C   M E T H O D S   – – – – – – – – – – – – – – – – –
 
     /**
-     * Parses the defined TLD string to a {@see \Niirrty\Web\TopLevelDomain} instance. On error it returns FALSE.
+     * Parses the defined TLD string to a {@see TopLevelDomain} instance. On error it returns FALSE.
      *
      * @param string|null         $tld            The TLD to parse.
      * @param TopLevelDomain|null $parsedTldOut   Returns the TopLevelDomain if the method returns true
@@ -398,7 +399,7 @@ class TopLevelDomain
             $tld = idnToASCII( $tld );
         }
 
-        if ( empty( $tld ) || !\is_string( $tld ) )
+        if ( empty( $tld ) || ! \is_string( $tld ) )
         {
             // NULL values or none string or empty values will always return FALSE
             return false;
@@ -410,10 +411,12 @@ class TopLevelDomain
         if ( $allowOnlyKnown )
         {
             // init the extended regexp, if only known TLDs are accepted
-            $regex = '~^(' . static::DOUBLE_TLDS . '|' . static::KNOWN_GENERIC . '|' . static::KNOWN_COUNTRY . '|' . static::KNOWN_GEOGRAPHIC . '|' . static::KNOWN_LC_COUNTRY . '|' . static::KNOWN_LC_GENERIC . '|' . static::KNOWN_RESERVED . ')\.?$~i';
+            $regex = '~^(' . static::DOUBLE_TLDS . '|' . static::KNOWN_GENERIC . '|' . static::KNOWN_COUNTRY
+                   . '|' . static::KNOWN_GEOGRAPHIC . '|' . static::KNOWN_LC_COUNTRY . '|' . static::KNOWN_LC_GENERIC
+                   . '|' . static::KNOWN_RESERVED . ')\.?$~i';
         }
 
-        if ( !\preg_match( $regex, $tld ) )
+        if ( ! \preg_match( $regex, $tld ) )
         {
             // $tld have no valid TLD defined
             return false;
@@ -432,16 +435,16 @@ class TopLevelDomain
     }
 
     /**
-     * Parses the defined TLD string to a {@see \Niirrty\Web\TopLevelDomain} instance. On error it returns FALSE.
+     * Parses the defined TLD string to a {@see TopLevelDomain} instance. On error it returns FALSE.
      *
      * @param string|null $tld            The TLD to parse.
      * @param bool        $allowOnlyKnown Are only known main TLDs allowed to be a parsed as a TLD?
      * @param bool        $convertUniCode Convert unicode TLDs to Puny code? (Default = TRUE)
      *
-     * @return TopLevelDomain|bool   Returns the TopLevelDomain or FALSE on error.
+     * @return TopLevelDomain|false   Returns the TopLevelDomain or FALSE on error.
      */
     public static function Parse(
-        ?string $tld, bool $allowOnlyKnown = false, bool $convertUniCode = true ) : TopLevelDomain|bool
+        ?string $tld, bool $allowOnlyKnown = false, bool $convertUniCode = true ) : TopLevelDomain|false
     {
 
         if ( $convertUniCode )
@@ -449,7 +452,7 @@ class TopLevelDomain
             $tld = idnToASCII( $tld );
         }
 
-        if ( empty( $tld ) || !\is_string( $tld ) )
+        if ( empty( $tld ) || ! \is_string( $tld ) )
         {
             // NULL values or none string or empty values will always return FALSE
             return false;
@@ -461,10 +464,12 @@ class TopLevelDomain
         if ( $allowOnlyKnown )
         {
             // init the extended regexp, if only known TLDs are accepted
-            $regex = '~^(' . static::DOUBLE_TLDS . '|' . static::KNOWN_GENERIC . '|' . static::KNOWN_COUNTRY . '|' . static::KNOWN_GEOGRAPHIC . '|' . static::KNOWN_LC_COUNTRY . '|' . static::KNOWN_LC_GENERIC . '|' . static::KNOWN_RESERVED . ')\.?$~i';
+            $regex = '~^(' . static::DOUBLE_TLDS . '|' . static::KNOWN_GENERIC . '|' . static::KNOWN_COUNTRY . '|'
+                   . static::KNOWN_GEOGRAPHIC . '|' . static::KNOWN_LC_COUNTRY . '|' . static::KNOWN_LC_GENERIC . '|'
+                   . static::KNOWN_RESERVED . ')\.?$~i';
         }
 
-        if ( !\preg_match( $regex, $tld ) )
+        if ( ! \preg_match( $regex, $tld ) )
         {
             // $tld have no valid TLD defined
             return false;
@@ -501,7 +506,7 @@ class TopLevelDomain
             $hostString = idnToASCII( $hostString );
         }
 
-        if ( empty( $hostString ) || !\is_string( $hostString ) )
+        if ( empty( $hostString ) )
         {
             // NULL values or none string values will always return FALSE
             return false;
@@ -510,15 +515,17 @@ class TopLevelDomain
         // This is the default regexp, used if its not required to be a known TLD, only a valid format is required
         $regex = '~^(.+?)\.(' . static::DOUBLE_TLDS . '\.?)$~i';
 
-        if ( !\preg_match( $regex, $hostString, $matches ) )
+        if ( ! \preg_match( $regex, $hostString, $matches ) )
         {
             $regex = '~^(.+?)\.((' . static::KNOWN_FORMAT . ')\.?)$~i';
             if ( $allowOnlyKnown )
             {
                 // init the extended regexp, if only known TLDs are accepted
-                $regex = '~^(.+)\.(((' . static::DOUBLE_TLDS . ')|' . static::KNOWN_GENERIC . '|' . static::KNOWN_COUNTRY . '|' . static::KNOWN_GEOGRAPHIC . '|' . static::KNOWN_LC_COUNTRY . '|' . static::KNOWN_LC_GENERIC . '|' . static::KNOWN_RESERVED . ')\.?)$~i';
+                $regex = '~^(.+)\.(((' . static::DOUBLE_TLDS . ')|' . static::KNOWN_GENERIC . '|'
+                       . static::KNOWN_COUNTRY . '|' . static::KNOWN_GEOGRAPHIC . '|' . static::KNOWN_LC_COUNTRY . '|'
+                       . static::KNOWN_LC_GENERIC . '|' . static::KNOWN_RESERVED . ')\.?)$~i';
             }
-            if ( !\preg_match( $regex, $hostString, $matches ) )
+            if ( ! \preg_match( $regex, $hostString, $matches ) )
             {
                 // $hostString have no valid TLD defined
                 return false;
@@ -547,10 +554,10 @@ class TopLevelDomain
      * @param bool   $allowOnlyKnown                       Are only known main TLDs allowed to be a parsed as a TLD?
      * @param bool   $convertUniCode                       Convert unicode Hosts to Puny code? (Default = FALSE)
      *
-     * @return TopLevelDomain|bool   Returns the TopLevelDomain or FALSE on error.
+     * @return TopLevelDomain|false   Returns the TopLevelDomain or FALSE on error.
      */
     public static function ParseExtract(
-        string &$hostString, bool $allowOnlyKnown = false, bool $convertUniCode = false ): TopLevelDomain|bool
+        string &$hostString, bool $allowOnlyKnown = false, bool $convertUniCode = false ): TopLevelDomain|false
     {
 
         if ( $convertUniCode )
@@ -558,7 +565,7 @@ class TopLevelDomain
             $hostString = idnToASCII( $hostString );
         }
 
-        if ( empty( $hostString ) || !\is_string( $hostString ) )
+        if ( empty( $hostString ) )
         {
             // NULL values or none string values will always return FALSE
             return false;
@@ -567,15 +574,17 @@ class TopLevelDomain
         // This is the default regexp, used if its not required to be a known TLD, only a valid format is required
         $regex = '~^(.+?)\.(' . static::DOUBLE_TLDS . '\.?)$~i';
 
-        if ( !\preg_match( $regex, $hostString, $matches ) )
+        if ( ! \preg_match( $regex, $hostString, $matches ) )
         {
             $regex = '~^(.+?)\.((' . static::KNOWN_FORMAT . ')\.?)$~i';
             if ( $allowOnlyKnown )
             {
                 // init the extended regexp, if only known TLDs are accepted
-                $regex = '~^(.+)\.((' . static::DOUBLE_TLDS . '|' . static::KNOWN_GENERIC . '|' . static::KNOWN_COUNTRY . '|' . static::KNOWN_GEOGRAPHIC . '|' . static::KNOWN_LC_COUNTRY . '|' . static::KNOWN_LC_GENERIC . '|' . static::KNOWN_RESERVED . ')\.?)$~i';
+                $regex = '~^(.+)\.((' . static::DOUBLE_TLDS . '|' . static::KNOWN_GENERIC . '|' . static::KNOWN_COUNTRY
+                       . '|' . static::KNOWN_GEOGRAPHIC . '|' . static::KNOWN_LC_COUNTRY . '|'
+                       . static::KNOWN_LC_GENERIC . '|' . static::KNOWN_RESERVED . ')\.?)$~i';
             }
-            if ( !\preg_match( $regex, $hostString, $matches ) )
+            if ( ! \preg_match( $regex, $hostString, $matches ) )
             {
                 // $hostString have no valid TLD defined
                 return false;

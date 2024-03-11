@@ -22,17 +22,17 @@ interface UrlScheme
     /**
      * The 'http' scheme.
      */
-    const HTTP = 'http';
+    const string HTTP = 'http';
 
     /**
      * The 'https' SSL scheme.
      */
-    const SSL = 'https';
+    const string SSL = 'https';
 
     /**
      * The 'ftp' scheme.
      */
-    const FTP = 'ftp';
+    const string FTP = 'ftp';
 
 
 }

@@ -1,10 +1,9 @@
 <?php /** @noinspection PhpUnused */
 /**
  * @author         Ni Irrty <niirrty+code@gmail.com>
- * @copyright      © 2016-2021, Ni Irrty
+ * @copyright      © 2016-2024, Ni Irrty
  * @package        Niirrty\Web
  * @since          2017-11-02
- * @version        0.4.0
  */
 
 
@@ -15,6 +14,7 @@ namespace Niirrty\Web;
 
 
 use \Niirrty\ArrayHelper;
+use \Niirrty\IToString;
 
 
 /**
@@ -34,7 +34,7 @@ use \Niirrty\ArrayHelper;
  *
  * All this states can be accessed via associated is*() methods.
  */
-class SecondLevelDomain
+class SecondLevelDomain implements IToString
 {
 
 
@@ -52,7 +52,7 @@ class SecondLevelDomain
 
     #region // – – –   C L A S S   C O N S T A N T S   – – – – – – – – – – – – – – – – – – – – – – –
 
-    protected const URL_SHORTENERS = [
+    protected const array URL_SHORTENERS = [
         'bit.do', 't.co', 'lnkd.in', 'db.tt', 'qr.ae', 'adf.ly', 'goo.gl', 'bitly.com', 'cur.lv', 'tinyurl.com',
         'ow.ly', 'bit.ly', 'adcrun.ch', 'ity.im', 'q.gs', 'viralurl.com', 'is.gd', 'vur.me', 'bc.vc', 'twitthis.com',
         'u.to', 'j.mp', 'buzurl.com', 'cutt.us', 'u.bb', 'yourls.org', 'crisco.com', 'x.co', 'prettylinkpro.com',
@@ -64,11 +64,11 @@ class SecondLevelDomain
     ];
 
     // see: http://dnslookup.me/dynamic-dns/
-    protected const DYN_DNS_SERVICES = '~^(.+\.wow64|(cable|optus|ddns|evangelion)\.nu|(45z|au2000|user32|darsite|darweb|dns2go|dnsmadeeasy|dnspark|dumb1|dyn(dns|dsl|serv|-access|nip)|thatip|tklapp|weedns|easydns|tzo|easydns4u|etowns|freelancedeveloper|hldns|powerdns|kyed|no-ip|ohflip|oray|servequake|usarmyreserve|wikababa|zerigo|zoneedit|zonomi)\.com|(dtdns|dynamic-dns|dynamic-site|dyns|dynserv|dynup|dyn-access|idleplay|minidns|sytes|tftpd|cjb|8866|xicp|planetdns|tzo)\.net|(afraid|3322|darktech|dhis|dhs|dynserv|dyn-access|irc-chat|planetdns|tzo)\.org|(dnsd|prout)\.be|dyn\.ee|dyn-access\.(de|info|biz)|dynam\.ac|dyn\.ro|my-ho\.st|(dyndns|lir|yaboo)\.dk|(dyns|metadns)\.cx|(homepc|myserver|ods|staticcling|yi|whyi|b0b|xname)\.org|widescreenhd\.tv|planetdns\.(biz|ca)|tzo\.cc)$~i';
+    protected const string DYN_DNS_SERVICES = '~^(.+\.wow64|(cable|optus|ddns|evangelion)\.nu|(45z|au2000|user32|darsite|darweb|dns2go|dnsmadeeasy|dnspark|dumb1|dyn(dns|dsl|serv|-access|nip)|thatip|tklapp|weedns|easydns|tzo|easydns4u|etowns|freelancedeveloper|hldns|powerdns|kyed|no-ip|ohflip|oray|servequake|usarmyreserve|wikababa|zerigo|zoneedit|zonomi)\.com|(dtdns|dynamic-dns|dynamic-site|dyns|dynserv|dynup|dyn-access|idleplay|minidns|sytes|tftpd|cjb|8866|xicp|planetdns|tzo)\.net|(afraid|3322|darktech|dhis|dhs|dynserv|dyn-access|irc-chat|planetdns|tzo)\.org|(dnsd|prout)\.be|dyn\.ee|dyn-access\.(de|info|biz)|dynam\.ac|dyn\.ro|my-ho\.st|(dyndns|lir|yaboo)\.dk|(dyns|metadns)\.cx|(homepc|myserver|ods|staticcling|yi|whyi|b0b|xname)\.org|widescreenhd\.tv|planetdns\.(biz|ca)|tzo\.cc)$~i';
 
-    protected const LOCAL_HOSTS      = '~^(local(host|domain)?)$~';
+    protected const string LOCAL_HOSTS = '~^(local(host|domain)?)$~';
 
-    protected const RESERVED_HOSTS   = '~^(example\.(com|net|org)|speedport\.ip|router\.net)$~';
+    protected const string RESERVED_HOSTS = '~^(example\.(com|net|org)|speedport\.ip|router\.net)$~';
 
     #endregion
 
@@ -417,7 +417,7 @@ class SecondLevelDomain
     #region // – – –   P U B L I C   S T A T I C   M E T H O D S   – – – – – – – – – – – – – – – – –
 
     /**
-     * Parses the defined Second Level Domain string to a {@see \Niirrty\Web\SecondLevelDomain} instance. On error it
+     * Parses the defined Second Level Domain string to a {@see SecondLevelDomain} instance. On error it
      * returns FALSE.
      *
      * @param string|null            $sld                 The second level domain string, including the optional TLD.
@@ -489,17 +489,17 @@ class SecondLevelDomain
     }
 
     /**
-     * Parses the defined Second Level Domain string to a {@see \Niirrty\Web\SecondLevelDomain} instance. On error it
+     * Parses the defined Second Level Domain string to a {@see SecondLevelDomain} instance. On error it
      * returns FALSE.
      *
      * @param string|null $sld                The second level domain string, including the optional TLD.
      * @param bool        $allowOnlyKnownTlds Are only known main TLDs allowed to be a parsed as a TLD?
      * @param bool        $convertUniCode     Convert unicode SLDs to Puny code? (Default = TRUE)
      *
-     * @return SecondLevelDomain|boolean
+     * @return SecondLevelDomain|false
      */
     public static function Parse( ?string $sld, bool $allowOnlyKnownTlds = false, bool $convertUniCode = true )
-    : SecondLevelDomain|bool
+        : SecondLevelDomain|false
     {
 
         if ( $convertUniCode )
@@ -578,7 +578,7 @@ class SecondLevelDomain
     /**
      * Extracts a Second level domain definition from a full host definition like 'www.example.com' => 'example.com'.
      * The rest (Third level label (often called 'Sub domain name')) is returned by $host, if the method returns a
-     * valid {@see \Niirrty\Web\SecondLevelDomain} instance.
+     * valid {@see SecondLevelDomain} instance.
      *
      * @param string                 $host               The full host definition and it returns the resulting third
      *                                                   level label (known as sub domain name) if the method returns
@@ -590,7 +590,7 @@ class SecondLevelDomain
      */
     public static function TryParseExtract(
         string &$host, ?SecondLevelDomain &$parsedSldOut, bool $allowOnlyKnownTlds = false, bool $convertUniCode = false )
-    : bool
+        : bool
     {
 
         if ( $convertUniCode )
@@ -598,7 +598,7 @@ class SecondLevelDomain
             $host = idnToASCII( $host );
         }
 
-        if ( empty( $host ) || !\is_string( $host ) )
+        if ( empty( $host ) )
         {
             // NULL values or none string values will always return FALSE
             return false;
@@ -695,17 +695,17 @@ class SecondLevelDomain
     /**
      * Extracts a Second level domain definition from a full host definition like 'www.example.com' => 'example.com'.
      * The rest (Third level label (often called 'Sub domain name')) is returned by $host, if the method returns a
-     * valid {@see \Niirrty\Web\SecondLevelDomain} instance.
+     * valid {@see SecondLevelDomain} instance.
      *
      * @param string  $host                The full host definition and it returns the resulting third level label
      *                                     (known as sub domain name) if the method returns a new instance
      * @param boolean $allowOnlyKnownTlds  Are only known main TLDs allowed to be a parsed as a TLD?
      * @param bool    $convertUniCode      Convert unicode SLDs to Puny code? (Default = TRUE)
      *
-     * @return SecondLevelDomain|bool
+     * @return SecondLevelDomain|false
      */
     public static function ParseExtract( string &$host, bool $allowOnlyKnownTlds = false, bool $convertUniCode = false )
-    : SecondLevelDomain|bool
+        : SecondLevelDomain|false
     {
 
         if ( $convertUniCode )

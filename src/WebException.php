@@ -1,10 +1,9 @@
 <?php
 /**
  * @author         Ni Irrty <niirrty+code@gmail.com>
- * @copyright      © 2016-2021, Ni Irrty
+ * @copyright      © 2016-2024, Ni Irrty
  * @package        Niirrty\Web
  * @since          2017-11-02
- * @version        0.4.0
  */
 
 
@@ -20,7 +19,7 @@ use \Niirrty\NiirrtyException;
 /**
  * This class defines a exception, used as base exception of all web exceptions.
  *
- * It extends from {@see \Niirrty\MessierException}.
+ * It extends from {@see NiirrtyException}.
  */
 class WebException extends NiirrtyException
 {
@@ -35,7 +34,7 @@ class WebException extends NiirrtyException
      * @param integer         $code     The optional error code (Defaults to \E_USER_ERROR)
      * @param \Throwable|null $previous A optional previous exception
      */
-    public function __construct( $message, int $code = 256, ?\Throwable $previous = null )
+    public function __construct( string $message, int $code = 256, ?\Throwable $previous = null )
     {
 
         parent::__construct(

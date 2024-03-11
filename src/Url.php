@@ -1,10 +1,9 @@
 <?php
 /**
  * @author         Ni Irrty <niirrty+code@gmail.com>
- * @copyright      © 2016-2021, Ni Irrty
+ * @copyright      © 2016-2024, Ni Irrty
  * @package        Niirrty\Web
  * @since          2017-11-02
- * @version        0.4.0
  */
 
 
@@ -101,7 +100,7 @@ class Url
     /**
      * Finds all URLs inside a string to check. It returns the following match groups: 1=protocol, 2=host, 3=path+
      */
-    protected const URL_FINDER = '~(https?|ftp)://([a-z0-9_.-]+)(/[a-z0-9_./+%?&#]+)?~i';
+    protected const string URL_FINDER = '~(https?|ftp)://([a-z0-9_.-]+)(/[a-z0-9_./+%?&#]+)?~i';
 
     #endregion
 
@@ -250,11 +249,11 @@ class Url
      * <code>http://example.com/?redirect=http%3A%2F%2Fexample.net%2Fbadurl</code>
      *
      * If a possible open redirection URL was found, it is stored as a separate \Niirrty\Web\Url instance and can
-     * be accessed by {@see \Niirrty\Web\Url::getOpenRedirectionURLs()}.
+     * be accessed by {@see Url::getOpenRedirectionURLs()}.
      *
      * If it really works as a usable open redirection bug, can only be checked, if a real request is send, to
      * check if the redirection works. If you want to real check it out you can use the
-     * {@see \Niirrty\Web\Url::checkForOpenRedirect()} method. But its important to read its documentation before!
+     * {@see Url::checkForOpenRedirect()} method. But its important to read its documentation before!
      *
      * @param int|null $resultPoints returns the max. probability of a URL injection (0-10 and > 4 means its possible)
      * @return boolean
@@ -275,28 +274,28 @@ class Url
             return $resultPoints > 4;
         }
 
-        if ( !\is_array( $this->query ) || \count( $this->query ) < 1 )
+        if ( \count( $this->query ) < 1 )
         {
             // If no query parameters are defined every thing is OK and we do'nt have to do more checks
             return false;
         }
 
         // Init array to hold some founded param names key) and associated resultpoints
-        $founds = [];
+        $founds  = [];
         $highest = 0;
-        $query = \is_array( $this->query ) ? $this->query : [];
+        $query   = $this->query;
 
         // OK lets check all GET/query parameters
         foreach ( $query as $key => $value )
         {
 
-            if ( !\is_string( $value ) )
+            if ( ! \is_string( $value ) )
             {
                 // The query parameter value is not a string. Go to next one.
                 continue;
             }
 
-            if ( !\preg_match( '~^(https?|ftps?)://~i', $value ) )
+            if ( ! \preg_match( '~^(https?|ftps?)://~i', $value ) )
             {
                 // The query parameter value is not a web url, go to next one.
                 continue;
@@ -308,7 +307,7 @@ class Url
                 continue;
             }
 
-            if ( !( $url->getDomain() instanceof Domain ) )
+            if ( ! ( $url->getDomain() instanceof Domain ) )
             {
                 // There is no usable domain defined, go to next one.
                 continue;
@@ -337,7 +336,7 @@ class Url
                 $founds[ $key ] += 2;
             }
 
-            if ( !$url->useAssociatedPort() )
+            if ( ! $url->useAssociatedPort() )
             {
                 // Make it bad if no associated Port is used
                 ++$founds[ $key ];
@@ -395,7 +394,7 @@ class Url
     }
 
     /**
-     * Returns all possible open redirection URLs, defined if {@see \Niirrty\Web\Url::isPossibleOpenRedirect()}
+     * Returns all possible open redirection URLs, defined if {@see Url::isPossibleOpenRedirect()}
      * returns TRUE.
      *
      * @return Url[]
@@ -496,7 +495,7 @@ class Url
             // There are usable headers in response, handle it
 
             // Make header keys to lower case
-            $headers = \array_change_key_case( $headers, \CASE_LOWER );
+            $headers = \array_change_key_case( $headers );
 
             if ( isset( $headers[ 'location' ] ) && ( $urlForTestContents === $headers[ 'location' ] ) )
             {
@@ -915,7 +914,7 @@ class Url
 
             // We have found some URLs, get it
 
-            $matches = (array) $matches[ 0 ];
+            $matches = $matches[ 0 ];
 
             // Loop all matching strings
             foreach ( $matches as $match )
@@ -939,7 +938,7 @@ class Url
 
         if ( \count( $matches ) > 0 && \count( $matches[ 0 ] ) > 0 )
         {
-            foreach ( (array) $matches[ 0 ] as $match )
+            foreach ( $matches[ 0 ] as $match )
             {
                 if ( false === ( $url = Url::Parse( $match ) ) )
                 {
@@ -959,7 +958,7 @@ class Url
     }
 
     /**
-     * Parses a URL string and returns the resulting {@see \Niirrty\Web\Url} instance. If parsing fails, it returns
+     * Parses a URL string and returns the resulting {@see Url} instance. If parsing fails, it returns
      * boolean FALSE.
      *
      * @param string|null $urlString The URL string to parse
@@ -1001,7 +1000,7 @@ class Url
         }
 
         // Switch the case of the array keys to lower case.
-        $objectData = \array_change_key_case( $urlInfo, \CASE_LOWER );
+        $objectData = \array_change_key_case( $urlInfo );
 
         // The host must be defined!
         if ( empty( $objectData[ 'host' ] ) )
@@ -1074,7 +1073,7 @@ class Url
 
         // Encode the URL
         $encUrl = \preg_replace_callback(
-            '%[^:/@?&=#]+%usD',
+            '%[^:/@?&=#]+%u',
             function ( $match )
             {
                 return \urlencode( $match[ 0 ] );

@@ -1,10 +1,9 @@
 <?php
 /**
  * @author         Ni Irrty <niirrty+code@gmail.com>
- * @copyright      © 2016-2021, Ni Irrty
+ * @copyright      © 2016-2024, Ni Irrty
  * @package        Niirrty\Web
  * @since          2017-11-02
- * @version        0.4.0
  */
 
 
@@ -12,6 +11,9 @@ declare( strict_types=1 );
 
 
 namespace Niirrty\Web;
+
+
+use \Niirrty\IToString;
 
 
 /**
@@ -31,7 +33,7 @@ namespace Niirrty\Web;
  * For some validation reasons the class can get &amp; store some testing states, informing about
  * Domain details.
  */
-final class Domain
+final class Domain implements IToString
 {
 
 
@@ -56,7 +58,7 @@ final class Domain
      *                                   If no sub domain exists the value is NULL.
      * @param SecondLevelDomain|null $sld The contained second level domain part.
      */
-    private function __construct( private ?string $subDomainName, private ?SecondLevelDomain $sld = null )
+    private function __construct( private readonly ?string $subDomainName, private readonly ?SecondLevelDomain $sld = null )
     {
 
         $value = (string) $this;
@@ -501,7 +503,7 @@ final class Domain
     #region // – – –   P U B L I C   S T A T I C   M E T H O D S   – – – – – – – – – – – – – – – – –">
 
     /**
-     * Parses the defined Domain string to a {@see \Niirrty\Web\Domain} instance and returns if this was successful.
+     * Parses the defined Domain string to a {@see Domain} instance and returns if this was successful.
      *
      * @param string|null $domainString       The domain string, including optional sub domain name, domain name and TLD.
      * @param Domain|null $parsedDomainOut    Returns the Domain if the method returns true
@@ -544,7 +546,7 @@ final class Domain
 
         if ( !empty( $_domainString ) )
         {
-            if ( !\preg_match( '~^[a-z0-9][a-z0-9_.-]*$~', $_domainString ) ||
+            if ( ! \preg_match( '~^[a-z0-9][a-z0-9_.-]*$~', $_domainString ) ||
                  \preg_match( '~(\.[^a-z0-9_]|[^a-z0-9_]\.)~', $_domainString ) ||
                  \preg_match( '~[^a-z0-9_]$~', $_domainString ) ||
                  \count( \explode( '.', $_domainString ) ) > 3 )
@@ -557,7 +559,7 @@ final class Domain
             $_domainString = null;
         }
 
-        if ( $allowOnlyKnownTlds && !$_sld->HasKnownTLD )
+        if ( $allowOnlyKnownTlds && ! $_sld->hasKnownTLD() )
         {
             return false;
         }
@@ -569,7 +571,7 @@ final class Domain
     }
 
     /**
-     * Parses the defined Domain string to a {@see \Niirrty\Web\Domain} instance and returns if this was successful.
+     * Parses the defined Domain string to a {@see Domain} instance and returns if this was successful.
      *
      * @param string|null $domainString       The domain string, including optional sub domain name, domain name and TLD.
      * @param boolean     $allowOnlyKnownTlds Are only known main TLDs allowed to be a parsed as a TLD?
@@ -578,7 +580,7 @@ final class Domain
      * @return Domain|false
      */
     public static function Parse(
-        ?string $domainString, bool $allowOnlyKnownTlds = false, bool $convertUniCode = true ): Domain|bool
+        ?string $domainString, bool $allowOnlyKnownTlds = false, bool $convertUniCode = true ): Domain|false
     {
 
         if ( $convertUniCode )
